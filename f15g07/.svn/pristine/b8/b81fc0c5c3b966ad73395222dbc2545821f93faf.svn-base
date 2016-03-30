@@ -1,0 +1,353 @@
+<?php
+
+/**
+ * RestaurantDB provides functions to either insert or retrieve restaurants
+ * from the database. 
+ *
+ * @author Gary Ng 
+ */
+class RestaurantDB extends DatabaseHelper {
+
+    const TABLE = '`restaurant`';
+    const ID = '`id`';
+    const KEY = '`key`';
+    const NAME = '`name`';
+    const DESC = '`description`';
+    const SHORT_DESC = "`short_desc`";
+    const TAGS = '`tags`';
+    const RATING = "`rating`";
+    const PRICE_MAX = "`price_max`";
+    const NUM_TABLES = "`num_tables`";
+
+    /**
+     * Retrieve a list of restaurants using a name. Results returned are
+     * sorted by location.
+     */
+    public static function searchByName($name, $location, $limit) {
+        $restaurants = array();
+
+        $con = parent::createConnection();
+        $statement = mysqli_prepare($con,
+            ' SELECT r.' . RestaurantDB::ID .
+            ' FROM ' . RestaurantDB::TABLE . ' r' .
+            ' LEFT JOIN ' . RestaurantContactDB::TABLE . ' rc' .
+            ' ON r.' . RestaurantDB::ID . ' = rc.' . RestaurantContactDB::ID .
+            ' WHERE r.' . RestaurantDB::NAME . ' LIKE ?' .
+            ' ORDER BY FIELD(rc.' . RestaurantContactDB::CITY . ', ?) DESC, r.' . RestaurantDB::NAME .
+            ' LIMIT ?'
+        );
+
+        $like = "%{$name}%";
+
+        $statement->bind_param('ssi', $like, $location, $limit);
+        $statement->execute();
+
+        $statement->bind_result($id);
+
+        while ($statement->fetch()) {
+            $restaurant = RestaurantDB::getRestaurantById($id);
+            array_push($restaurants, $restaurant);
+        }
+
+        $statement->close();
+
+        return $restaurants;
+    }
+
+    /**
+     * Retrieve a list of restaurants using an array of tags. Results returned
+     * are sorted by location.
+     */
+    public static function searchByTags($tags, $location, $limit) {
+        $restaurants = array();
+
+        $tempTags = array();
+        foreach ($tags as $tag) {
+            array_push($tempTags, "\"%{$tag}%\"");
+        }
+
+        $str = implode(' OR r.' . RestaurantDB::TAGS . ' LIKE ', $tempTags);
+
+        $con = parent::createConnection();
+        $statement = mysqli_prepare($con,
+            ' SELECT r.' . RestaurantDB::ID .
+            ' FROM ' . RestaurantDB::TABLE . ' r' .
+            ' LEFT JOIN ' . RestaurantContactDB::TABLE . ' rc' .
+            ' ON r.' . RestaurantDB::ID . ' = rc.' . RestaurantContactDB::ID .
+            ' WHERE r.' . RestaurantDB::TAGS . ' LIKE ' . $str .
+            ' ORDER BY FIELD(rc.' . RestaurantContactDB::CITY . ', ?) DESC, r.' . RestaurantDB::NAME .
+            ' LIMIT ?'
+        );
+
+        $statement->bind_param('si', $location, $limit);
+        $statement->execute();
+
+        $statement->bind_result($id);
+
+        while ($statement->fetch()) {
+            $restaurant = RestaurantDB::getRestaurantById($id);
+            array_push($restaurants, $restaurant);
+        }
+
+        $statement->close();
+
+        return $restaurants;
+    }
+
+    /**
+     * Retrieve a list of restaurants using a city. Results returned
+     * are sorted by location.
+     */
+    public static function searchByCity($city, $location, $limit) {
+        $restaurants = array();
+
+        $con = parent::createConnection();
+        $statement = mysqli_prepare($con,
+            ' SELECT r.' . RestaurantDB::ID .
+            ' FROM ' . RestaurantDB::TABLE . ' r' .
+            ' LEFT JOIN ' . RestaurantContactDB::TABLE . ' rc' .
+            ' ON r.' . RestaurantDB::ID . ' = rc.' . RestaurantContactDB::ID .
+            ' WHERE rc.' . RestaurantContactDB::CITY . ' LIKE ?' .
+            ' ORDER BY FIELD(rc.' . RestaurantContactDB::CITY . ', ?) DESC, r.' . RestaurantDB::NAME .
+            ' LIMIT ?'
+        );
+
+        $like = "%{$city}%";
+
+        $statement->bind_param('ssi', $like, $location, $limit);
+        $statement->execute();
+
+        $statement->bind_result($id);
+
+        while ($statement->fetch()) {
+            $restaurant = RestaurantDB::getRestaurantById($id);
+            array_push($restaurants, $restaurant);
+        }
+
+        $statement->close();
+
+        return $restaurants;
+    }
+
+    /**
+     * Creates a restaurant entry in the database and return the values as
+     * a restaurant instance.
+     */
+    public static function createRestaurant($key, $name, $desc, $tags,
+            $priceMin, $priceMax, $numTables) {
+        $restaurant = null;
+        
+        $fields = array(
+            RestaurantDB::KEY,
+            RestaurantDB::NAME,
+            RestaurantDB::DESC,
+            RestaurantDB::TAGS,
+            RestaurantDB::RATING,
+            RestaurantDB::PRICE_MAX,
+            RestaurantDB::NUM_TABLES
+        );
+
+        $con = parent::createConnection();
+        $statement = mysqli_prepare($con,
+            ' INSERT INTO ' . RestaurantDB::TABLE . ' (' .
+            implode(', ', $fields) .
+            ') VALUES (?, ?, ?, ?, ?, ?, ?)'
+        );
+
+        $statement->bind_param('ssssiii', $key, $name, $desc, $tags, $priceMin,
+                $priceMax, $numTables);
+        $statement->execute();
+        
+        if ($statement->affected_rows > 0) {
+            $id = $statement->insert_id;
+            $restaurant = RestaurantDB::getRestaurantById($id);
+        }
+
+        $statement->close();
+        
+        return $restaurant;
+    }
+
+    /**
+     * Retrieve a restaurant using a specified parameter. To be used for
+     * functions that specifically asks for a ID or key.
+     */
+    public static function getRestaurantByParam($type, $value) {
+        $restaurant = null;
+
+        $fields = array(
+            RestaurantDB::ID,
+            RestaurantDB::KEY,
+            RestaurantDB::NAME,
+            RestaurantDB::DESC,
+            RestaurantDB::SHORT_DESC,
+            RestaurantDB::TAGS,
+            RestaurantDB::RATING,
+            RestaurantDB::PRICE_MAX,
+            RestaurantDB::NUM_TABLES
+        );
+
+        $con = parent::createConnection();
+
+        if ($type === RestaurantDB::ID) {
+            $statement = mysqli_prepare($con,
+                ' SELECT ' . implode(', ', $fields) .
+                ' FROM ' . RestaurantDB::TABLE .
+                ' WHERE ' . RestaurantDB::ID . ' = ?'
+            );
+
+            $statement->bind_param('i', $value);
+        } else if ($type === RestaurantDB::KEY) {
+            $statement = mysqli_prepare($con,
+                ' SELECT ' . implode(', ', $fields) .
+                ' FROM ' . RestaurantDB::TABLE .
+                ' WHERE ' . RestaurantDB::KEY . ' = ?'
+            );
+
+            $statement->bind_param('s', $value);
+        } else if ($type === RestaurantDB::NAME) {
+            echo 'In name';
+            $statement = mysqli_prepare($con,
+                ' SELECT ' . implode(', ', $fields) .
+                ' FROM ' . RestaurantDB::TABLE .
+                ' WHERE ' . RestaurantDB::NAME . ' = ?'
+            );
+
+            $statement->bind_param('s', $value);
+        } 
+
+        if (!isset($statement)) {
+            return null;
+        }
+
+        $statement->execute();
+
+        $statement->bind_result($id, $key, $name, $desc, $shortDesc, $tags,
+                $priceMin, $priceMax, $numTables);
+
+        if ($statement->fetch()) {
+            $restaurant = new Restaurant($id);
+            $restaurant->key = $key;
+            $restaurant->name = $name;
+            $restaurant->desc = $desc;
+            $restaurant->shortDesc = $shortDesc;
+            $restaurant->tags = $tags;
+            $restaurant->priceMin = $priceMin;
+            $restaurant->priceMax = $priceMax;
+            $restaurant->numTables = $numTables;
+
+            $location = RestaurantContactDB::getRestaurantLocation($id);
+            $restaurant->location = $location;
+            
+            $hours = RestaurantHoursDB::getHours($id);
+            $restaurant->hours = $hours;
+
+            $tables = RestaurantTablesDB::getTables($id);
+            $restaurant->tables = $tables;
+        }
+
+        $statement->close();
+        
+        return $restaurant;
+    }
+
+    /**
+     * Retrieves a restaurant using an ID.
+     */
+    public static function getRestaurantById($id) {
+        return RestaurantDB::getRestaurantByParam(RestaurantDB::ID, $id);
+    }
+
+    /**
+     * Retrieves a restaurant using a key.
+     */
+    public static function getRestaurantByKey($key) {
+        return RestaurantDB::getRestaurantByParam(RestaurantDB::KEY, $key);
+    }
+    
+    /**
+     * Retrieves a restaurant using a name.
+     */
+    public static function getRestaurantByName($name) {
+        return RestaurantDB::getRestaurantByParam(RestaurantDB::NAME, $name);
+    }
+
+    /**
+     * Retrieves a list of tags matching the partial tags.
+     */
+    public static function searchTags($tags, $location, $limit) {
+        $results = array();
+
+        $tempTags = array();
+        foreach ($tags as $tag) {
+            array_push($tempTags, "\"%{$tag}%\"");
+        }
+
+        $str = implode(' OR r.' . RestaurantDB::TAGS . ' LIKE ', $tempTags);
+
+        $con = parent::createConnection();
+        $statement = mysqli_prepare($con,
+            ' SELECT r.' . RestaurantDB::TAGS .
+            ' FROM ' . RestaurantDB::TABLE . ' r' .
+            ' LEFT JOIN ' . RestaurantContactDB::TABLE . ' rc' .
+            ' ON r.' . RestaurantDB::ID . ' = rc.' . RestaurantContactDB::ID .
+            ' WHERE r.' . RestaurantDB::TAGS . ' LIKE ' . $str .
+            ' ORDER BY FIELD(rc.' . RestaurantContactDB::CITY . ', ?) DESC'
+        );
+
+        $statement->bind_param('s', $location);
+        $statement->execute();
+
+        $statement->bind_result($tempTags);
+
+        while ($statement->fetch()) {
+            $tempTags = explode(' ', $tempTags);
+
+            foreach ($tags as $tag) {
+                foreach ($tempTags as $t) {
+                    if (strpos($t, $tag) === false) {
+                        continue;
+                    }
+                    
+                    $t = strtolower($t);
+                    if (!in_array($t, $results)) {
+                        array_push($results, $t);
+                    }
+                }
+            }
+        }
+
+        sort($results);
+        $results = array_slice($results, 0, $limit);
+
+        $statement->close();
+
+        return $results;
+    }
+    
+    /**
+     * Retrieves all restaurant keys
+     */
+    public static function getRestaurantKeys() {
+        $keys = array();
+
+        $con = parent::createConnection();
+        $statement = mysqli_prepare($con,
+            ' SELECT ' . RestaurantDB::KEY .
+            ' FROM ' . RestaurantDB::TABLE .
+            ' ORDER BY ' . RestaurantDB::KEY
+        );
+
+        $statement->execute();
+
+        $statement->bind_result($key);
+
+        while ($statement->fetch()) {
+            array_push($keys, $key);
+        }
+
+        $statement->close();
+
+        return $keys;
+    }
+}

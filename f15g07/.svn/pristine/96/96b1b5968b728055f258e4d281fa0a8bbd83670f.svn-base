@@ -1,0 +1,189 @@
+<?php
+require_once 'includes/config.php';
+
+$value = filter_input(INPUT_GET, 'v');
+$party = filter_input(INPUT_GET, 's');
+$time = filter_input(INPUT_GET, 't');
+
+$restaurant = RestaurantDB::getRestaurantByKey($value);
+
+$title = $restaurant != null ? $restaurant->name . ' | ' . TITLE : 'Welcome to ' . TITLE . '!';
+require_once 'includes/header.php';
+require_once 'includes/law.php';
+require_once 'includes/nav.php';
+?>
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyC98uLK_ggwQEynwsXGbAc3w2cE_tojOa4"></script>
+<?php
+if ($restaurant != null) {
+
+    display($restaurant, $party, $time);
+} else {
+    echo 'Restaurant does not exist!';
+}
+
+function display($restaurant, $party, $time2) {
+    ?>
+    <style>
+        #save-widget {
+            //width: 100%;
+            box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
+            background-color: white;
+            color:black;
+            padding: 1em;
+            font-size: 1.5em;
+            margin: 1em;
+        }
+
+    </style>
+    <script>
+        function initialize() { // gerate google maps with lat and lng
+           
+            var map = new google.maps.Map(document.getElementById("googleMap"), {
+                zoom: 17,
+                scrollwheel: false,
+                center: {lat: <?php echo $restaurant->location->latitude ?>, lng: <?php echo $restaurant->location->longitude ?>},
+                mapTypeControlOptions: {
+                    mapTypeIds: [
+                        google.maps.MapTypeId.ROADMAP,
+                        google.maps.MapTypeId.SATELLITE
+                    ],
+                    position: google.maps.ControlPosition.BOTTOM_LEFT
+                }
+            });
+
+            var widgetDiv = document.getElementById('save-widget');
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(widgetDiv);
+
+            // Append a Save Control to the existing save-widget div.
+            var saveWidget = new google.maps.SaveWidget(widgetDiv, {
+                place: {
+                    // ChIJN1t_tDeuEmsRUsoyG83frY4 is the place Id for Google Sydney.
+                    placeId: 'ChIJN1t_tDeuEmsRUsoyG83frY4',
+                    location: {lat: <?php echo $restaurant->location->latitude ?>, lng: <?php echo $restaurant->location->longitude ?>}
+                },
+                attribution: {
+                    source: 'Google Maps JavaScript API',
+                    webUrl: 'https://developers.google.com/maps/'
+                }
+            });
+
+            var marker = new google.maps.Marker({
+                map: map,
+                position: saveWidget.getPlace().location
+            });
+            
+        }
+        google.maps.event.addDomListener(window, 'load', initialize);//loads the map
+    </script>
+
+    <!--restaurant header custom to the restaurant-->
+    <div class="hud col-xs-4">
+        <div class="mainselection2 rest " style="background-image: url('images/everythings-chicken/gallery/1.jpg');">
+
+            <div class="col-md-3">
+
+                <img class="img-thumbnail" style="height: 192px;" src="<?php echo ImageHelper::getMainImage($restaurant->key) ?>">
+            </div>
+            <div style="height:100%;" class="card-background">
+                <br>
+                <h1 style="padding: 0; margin: 0;"><kbd><?php echo $restaurant->name ?></kbd></h1><br>
+                <h4 style="padding: 0; margin:0; "><kbd data-toggle="tooltip" data-placement="bottom" title="hah"><?php
+                        $counter = 0;
+                        $days = array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
+                        $days_abr = array("Sun", "Mon", "Tues", "Weds", "Thurs", "Fri", "Sat");
+                        foreach ($restaurant->hours as $day) {
+                            if (date("l") == $days[$counter]) {
+                                $h = date("H") - 8;
+                                $ch = ($h < 0) ? 24 + $h : $h;
+                                $start = $day[0];
+                                $end = $day[1];
+                                $shour = substr($start, 0, -6);
+                                $ehour = substr($end, 0, -6);
+                                $open = (substr($start, 0, -6) <= $ch && $ch <= substr($end, 0, -6)) ? " open" : " closed";
+
+                                $start_str = ($shour < 12) ? substr($start, 0, -3) . " AM" : (substr($start, 0, -6) - 12) . ":" . substr($start, 3, -3) . " PM";
+                                $end_str = ($ehour < 12) ? substr($end, 0, -3) . " AM" : (substr($end, 0, -6) - 12) . ":" . substr($end, 3, -3) . " PM";
+                                echo $days_abr[$counter] . ": " . $start_str . " - " . $end_str;
+                                ?>
+                                <span style="color:<?php echo(substr($start, 0, -6) <= $ch && $ch <= substr($end, 0, -6)) ? 'green' : 'red'; ?>"><?php echo $open ?></span>
+                                <?php
+                                echo " now" . "<br>";
+                            }
+                            $counter++;
+                        }
+                        ?></kbd></h4>
+                <h4 style='margin-bottom: 1.75em;'><kbd>price: <?php
+                        for ($i = 0; $i <= $restaurant->priceMin; $i++) {
+                            echo "<span class='glyphicon glyphicon-usd'></span>";
+                        }
+                        ?></kbd></h4>
+                <h4><kbd><span class='glyphicon glyphicon-map-marker'></span><?php echo " " . $restaurant->location->city . " | <span class='glyphicon glyphicon-phone-alt'></span> " . $restaurant->location->phone; ?></kbd></h4>
+
+            </div>
+        </div>
+    </div>
+
+    <div style="height:0.75em;" class="container col-xs-9">  </div>
+
+    <!-- reservation time slot hud -->
+    <div class="hud col-xs-4">
+        <div class="mainselection2 row">
+
+            <!-- time slot with server link and time search-->
+            <center id="reserve-search-div">
+    <?php include 'includes/search_bar_sm.php'; ?>
+                <h4 style="color: goldenrod;">Availability on <span class="reserve-div-date"></span> around <span class="reserve-div-time"></span> for <span class="reserve-div-party"></span> people</h4>
+            </center>
+
+            <center id="reserve-slots">
+                <script>
+                    getTimeSlots(<?php echo '"' . $restaurant->key . '", ' . $time2 . ', ' . $party; ?>, function (data) {
+                        var div = $("#reserve-search-div");
+                        div.find(".reserve-div-date").html(getDate(<?php echo $time2 * 1000; ?>));
+                        div.find(".reserve-div-time").html(getTime(<?php echo $time2 * 1000; ?>));
+                        div.find(".reserve-div-party").html(<?php echo $party; ?>);
+                        $("#reserve-slots").html(data);
+                    });
+                </script>
+            </center>
+
+        </div>
+    </div>
+
+    <div style="height:0.75em;" class="container col-xs-9">   </div>
+
+    <!--restaurant info with map and address-->
+    <div class="hud col-xs-4">
+        <div class="mainselection2 rest">
+            
+            <!--info <div>-->
+            <div class="col-md-6">
+                <h3>About <?php echo $restaurant->name ?></h3>
+                <p></p>
+                <p><?php echo $restaurant->desc ?></p>
+                <h3>Cuisine </h3>
+                <p><?php echo $restaurant->tags ?></p>
+            </div>
+
+            <!--map <div>-->
+            <div id="googleMap" class="" style="min-width: 24em; width:50%;height:250px;">
+
+            </div>
+            <!--address <div>-->
+            <div id="save-widget">
+                <p> <strong><?php echo $restaurant->location->houseNum . " " . $restaurant->location->street; ?></strong><br>
+    <?php echo $restaurant->location->city; ?><br>
+    <?php echo $restaurant->location->state . " " . $restaurant->location->zipCode; ?>
+                </p>
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <div style="height:1em;" class="container col-xs-9">   </div>
+    <?php
+}
+
+require_once 'includes/footer.php';

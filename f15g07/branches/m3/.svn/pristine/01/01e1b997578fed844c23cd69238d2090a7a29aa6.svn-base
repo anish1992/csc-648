@@ -1,0 +1,67 @@
+$(function () {
+    // nav bar
+    $("#nav-dropdown .dropdown-menu li a").click(function () {
+
+        //selsect <li>
+        $("#nav-dropdown .dropdown-toggle").text($(this).text());
+        $("#nav-dropdown .dropdown-toggle").attr('value', $(this).attr('value'));
+
+        //copy lcation selected to hidden <input> for submit... 
+        $("#loca").val($(this).attr('value'));
+    });
+
+    $("#b1").click(function () {
+        //$('#rest1').attr('aria-expanded', "true");
+        $('#b2').attr('aria-expanded', "false");
+        $('#b3').attr('aria-expanded', "false");
+        $('#b4').attr('aria-expanded', "false");
+        $('#b5').attr('aria-expanded', "false");
+    });
+    $("#b2").click(function () {
+        $('#b1').attr('aria-expanded', "false");
+        //$('#rest2').attr('aria-expanded', "true");
+        $('#b3').attr('aria-expanded', "false");
+        $('#b4').attr('aria-expanded', "false");
+        $('#b5').attr('aria-expanded', "false");
+    });
+    $("#b3").click(function () {
+        $('#b1').attr('aria-expanded', "false");
+        $('#b2').attr('aria-expanded', "false");
+        //$('#rest3').attr('aria-expanded', "true");
+        $('#b4').attr('aria-expanded', "false");
+        $('#b5').attr('aria-expanded', "false");
+    });
+    $("#b4").click(function () {
+        $('#b1').attr('aria-expanded', "false");
+        $('#b2').attr('aria-expanded', "false");
+        $('#b3').attr('aria-expanded', "false");
+        //$('#reat4').attr('aria-expanded', "true");
+        $('#b5').attr('aria-expanded', "false");
+    });
+    $("#b5").click(function () {
+        $('#b1').attr('aria-expanded', "false");
+        $('#b2').attr('aria-expanded', "false");
+        $('#b3').attr('aria-expanded', "false");
+        $('#b4').attr('aria-expanded', "false");
+        //$('#rest5').attr('aria-expanded', "true");
+    });
+
+
+    $("#sform").submit(function (event) {
+        event.preventDefault();
+
+        var query = $("#sform [name=input]").val().trim();
+        if (query.length === 0) {
+            //$("#sform [name=input]").parents('li').addClass('has-warning');
+            return;
+        }
+
+        var party = $("#sform [name=party]").val();
+
+        var date = $("#sform [name=date]").val();
+        var time = $("#sform [name=time]").val();
+        var seconds = new Date(date + " " + time).getTime() / 1000;
+
+        window.location.href = "search.php?" + "s=" + party + "&t=" + seconds + "&q=" + query;
+    });
+});

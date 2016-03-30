@@ -1,0 +1,141 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.hud    {
+    background-color: purple;
+    padding: 0px 30px 0px 30px;
+    border-radius: 5px 5px 5px 5px;
+    opacity: 0.65;
+    //align: center;
+}
+
+.controls {
+    // set up search box size
+    margin-top: 10px;
+    border: 1px solid transparent;
+    border-radius: 2px 0 0 2px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    height: 32px;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+.mainselection {
+    padding: 10px;
+}
+
+select {
+    border:0;
+    background:transparent;
+    height:32px;
+    border:1px solid #d8d8d8;
+    -webkit-appearance: none;
+}
+
+h2  {
+    color: goldenrod;
+}
+
+.form-group {
+    overflow: hidden;
+    padding: 5px 0px 5px 0px;
+    color: gray;
+}
+
+#project {
+    // set up search box location
+    font-size: 15px;
+    font-weight: 300;
+    margin:0px;
+    padding: 0 11px 0 11px;
+    text-overflow: ellipsis;
+    width: 320px;
+}
+
+/*alert css below */
+.thelaw {
+    //padding: 0;
+    margin: 0;
+    width: 100%;
+    background-color: #f0ad4e;
+    //height: 50px;
+    border-radius: 0;
+    text-align: center;
+    border-color: #f0ad4e;
+}// alert css ends
+
+.dropdown-menu  {
+    background-color: purple;
+}
+
+/*nav-bar css below */
+#custom-bootstrap-menu.navbar-default .navbar-brand {
+    color: rgba(214, 179, 83, 1);
+}
+#custom-bootstrap-menu.navbar-default {
+    font-size: 16px;
+    background-color: purple;
+    border-width: 0px;
+    border-radius: 0px;
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a {
+    color: goldenrod;
+    background-color: rgba(248, 248, 248, 0);
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:hover,
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:focus {
+    color: rgba(181, 191, 0, 1);
+    background-color: rgba(248, 248, 248, 0);
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a,
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:hover,
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:focus {
+    color: rgba(85, 85, 85, 1);
+    background-color: rgba(231, 231, 231, 1);
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle {
+    border-color: #ddd;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle:hover,
+#custom-bootstrap-menu.navbar-default .navbar-toggle:focus {
+    background-color: #ddd;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle .icon-bar {
+    background-color: #888;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle:hover .icon-bar,
+#custom-bootstrap-menu.navbar-default .navbar-toggle:focus .icon-bar {
+    background-color: #888;
+}//end of nav-bar css
+
+.slide  {
+    height: 100%;
+    clear: both;
+    width: 100%;
+    position: absolute;
+    //top: 150px;
+    overflow: hidden;
+}
+
+/*footer css below */
+footer {
+    position:fixed;
+    bottom: 0px;
+    clear: both;
+    width: 100%;
+    background-color: black;
+    opacity: 0.5;
+}//end of footer css
+
+#search_results {
+    border: 1px solid gray;
+    border-radius: 0.5em;
+    margin-top: 1em;
+    max-height: 20em;
+    overflow-y: scroll;
+    padding: 1em;
+    width: 50em;
+}

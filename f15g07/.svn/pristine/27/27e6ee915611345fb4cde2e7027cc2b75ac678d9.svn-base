@@ -1,0 +1,38 @@
+<?php
+/**
+ * ValidateLogin retrieves the Username and Password information from Lgin and does the authentication looking into the Database.
+ *
+ */
+session_start(); //Starting session
+require_once 'includes/config.php';
+
+// Grab User submitted information
+
+$useremail = $_POST["luser_email"];
+$pass = $_POST["luser_pass"];
+    
+
+
+if (!isset($useremail) && !isset($pass)) {
+    exit;
+}
+
+$useremail = trim($useremail);
+$pass = md5(trim($pass));
+echo $useremail;
+echo $pass;
+
+$user = UserInfoDB::getUser($useremail,$pass);
+
+    if (!$user) { // add this check.
+    header("location: invalid_login.php");
+    die('Invalid User ' . mysql_error());
+}
+     
+    // output data of each row
+    $_SESSION['user'] = $user;
+        //echo $_SESSION['user']->firstname;
+       header("location: index.php"); //Redirecting to User profile.
+     
+         
+     

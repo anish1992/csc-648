@@ -1,0 +1,9 @@
+#search_results {
+    border: 1px solid gray;
+    border-radius: 0.5em;
+    margin-top: 1em;
+    max-height: 20em;
+    overflow-y: scroll;
+    padding: 1em;
+    width: 50em;
+}

@@ -1,0 +1,32 @@
+<?php
+
+$title = 'Search Results';
+require_once 'includes/header.php';
+require_once 'includes/law.php';
+require_once 'includes/nav.php';
+
+if (!isset($results) || count($results) == 0) {
+    echo 'No Results';
+} else {
+    foreach ($results['name'] as $restaurant) {
+        display($restaurant);
+    }
+
+    foreach ($results['tags'] as $restaurant) {
+        display($restaurant);
+    }
+}
+
+require_once 'includes/footer.php';
+
+function display($restaurant) {
+?>
+        <div id="<?php echo $restaurant->key ?>">
+            <h1><?php echo $restaurant->name ?></h1>
+            <h3>Description</h3>
+            <p><?php echo $restaurant->desc ?></p>
+            <h3>Tags</h3>
+            <span><?php echo $restaurant->tags ?></span>
+        </div>
+<?php
+}

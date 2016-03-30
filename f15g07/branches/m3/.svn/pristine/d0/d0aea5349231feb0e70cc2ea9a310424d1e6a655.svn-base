@@ -1,0 +1,41 @@
+<?php
+
+$title = 'Search Results';
+require_once 'includes/header.php';
+require_once 'includes/law.php';
+require_once 'includes/nav.php';
+
+if (!isset($results) || count($results) == 0) {
+    echo "No Results";
+    
+} else {
+    echo "<div style='font-size:24px'>Direct Matches:";
+    foreach ($results['name'] as $restaurant) {
+        display($restaurant);
+        echo "";
+    }
+
+    echo 'Alternate Suggestions:';
+    foreach ($results['tags'] as $restaurant) {
+        display($restaurant);
+    }
+}
+
+require_once 'includes/footer.php';
+
+function display($restaurant) {
+?>
+    <center>
+        <div class='boxed' id="<?php echo $restaurant->key ?>" style='width:750px'>
+            
+            <div style='font-size:24px'<h1><?php echo $restaurant->name ?></h1>
+            <div style='font-size:18px'<p><?php echo $restaurant->shortDesc ?></p></div>
+            <img src='https://upload.wikimedia.org/wikipedia/commons/2/2d/SFSU_Campus_JPL_Library_Nov2012.JPG' height='250px' width='250px'>
+            <p style='font-size:14px' align='left'><?php echo $restaurant->desc ?></p>
+            <p align='left' style='font-size:16px'>Restaurant Search Tags:
+            <span style='font-size:12px'><?php echo $restaurant->tags ?></span>
+            </p>
+            
+    </center>
+<?php
+}

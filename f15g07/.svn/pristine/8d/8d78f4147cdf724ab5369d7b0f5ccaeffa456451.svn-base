@@ -1,0 +1,76 @@
+$(function () {
+
+
+    $(document).ready(function () { // search bar auto resize
+
+        if ($(this).width() < 400) {
+            document.getElementById('project').style.width = '12em';
+            //document.getElementById('googleMap').style.width = '200%';
+        }
+        else if ($(this).width() < 500) {
+            document.getElementById('project').style.width = '14em';
+            //document.getElementById('googleMap').style.width = '200%';
+        }
+        else if ($(this).width() < 700) {
+            document.getElementById('project').style.width = '16em';
+            
+        }
+        else if ($(this).width() < 1100) {
+            document.getElementById('project').style.width = '17.5em';
+        } else {
+            document.getElementById('project').style.width = '20em';
+        }
+        $(window).resize(function () { // auto aajust what window size changes
+            if ($(this).width() < 400) {
+                document.getElementById('project').style.width = '12em';
+                //document.getElementById('googleMap').style.width = '200%';
+            }
+            else if ($(this).width() < 500) {
+                document.getElementById('project').style.width = '14em';
+                //document.getElementById('googleMap').style.width = '200%';
+            }
+            else if ($(this).width() < 700) {
+                document.getElementById('project').style.width = '16em';
+                
+            }
+            else if ($(this).width() < 1100) {
+                document.getElementById('project').style.width = '17.5em';
+
+            } else {
+                document.getElementById('project').style.width = '20em';
+            }
+
+        });
+    });
+
+    $.get("action.php?action=setUserTime&value=" + new Date());
+});
+
+function getTimeSlots(key, time, party, callback) {
+    $.get("action.php?action=getTimeSlots&key=" + key + "&time=" + time + "&party=" + party, function(data) {
+        if (callback) {
+            callback(data);
+        }
+    });
+}
+
+function getDate(timeMillis) {
+    var date = new Date(timeMillis);
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var year = date.getFullYear();
+
+    return month + "/" + day + "/" + year;
+}
+
+function getTime(timeMillis) {
+    var date = new Date(timeMillis);
+    var hour = date.getHours() % 12;
+    if (hour === 0) {
+        hour = 12;
+    }
+    var minutes = ("0" + date.getMinutes()).slice(-2);
+    var period = date.getHours() < 12 ? "AM" : "PM";
+    
+    return hour + ":" + minutes + " " + period;
+}

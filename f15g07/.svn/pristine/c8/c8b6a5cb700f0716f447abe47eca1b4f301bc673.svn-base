@@ -1,0 +1,43 @@
+<?php
+require_once 'includes/config.php';
+
+require_once 'includes/header.php';
+require_once 'includes/law.php';
+require_once 'includes/nav.php';
+
+
+echo '<div class="container-fluid">';
+for($i = 1.0; $i < 12.0; $i+=0.5){
+    echo '  <div class = "row">
+                <div class="col-xs-3">
+                    <div class="time">
+                        <div class="card-block">
+                            <h1 class="card-subtitle text-muted"> ' . fmod(($i + 10.0) , 12.0) . ' </h1>
+                        </div>
+                    </div>
+                </div> ';
+    for($j = 1; $j <= 8; $j++ ){
+        echo '<div class="col-xs-3">
+                <div class="card">
+                    <h3 class="card-header "><strong>Mr. Jones ' .  $j . '</strong></h3>
+                    <div class="card-block">
+                        <h4 class="card-subtitle text-muted">2</h4>
+                        <p class="card-text">Card text goes here...</p>
+                    </div>
+                    <div class="card-footer text-muted"> <a class="btn host-btn" href="error.php">Check In</a></div>
+                </div>
+            </div>';
+    }
+    
+    echo "</div> ";
+    echo "<hr>";
+}
+
+echo "</div>";
+
+
+
+
+        
+    
+

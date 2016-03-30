@@ -1,0 +1,95 @@
+<?php
+
+/**
+ * Description of RestaurantContactDB
+ *
+ * @author Gary Ng
+ */
+class RestaurantContactDB extends DatabaseHelper {
+
+    const TABLE = '`restaurant_contact`';
+    const ID = '`restaurant_id`';
+    const HOUSE_NUM = '`house_num`';
+    const STREET = '`street`';
+    const CITY = '`city`';
+    const STATE = '`state`';
+    const ZIP_CODE = '`zip_code`';
+    const LATITUDE = '`latitude`';
+    const LONGITUDE = '`longitude`';
+    const PHONE = '`phone`';
+    const URL = '`web_url`';
+
+    public static function getCities($name, $limit) {
+        $cities = array();
+
+        $con = parent::createConnection();
+        $statement = mysqli_prepare($con,
+            ' SELECT DISTINCT ' . RestaurantContactDB::CITY .
+            ' FROM ' . RestaurantContactDB::TABLE .
+            ' WHERE ' . RestaurantContactDB::CITY . ' LIKE ?' .
+            ' ORDER BY ' . RestaurantContactDB::CITY .
+            ' LIMIT ?'
+        );
+
+        $like = "%{$name}%";
+
+        $statement->bind_param('si', $like, $limit);
+        $statement->execute();
+
+        $statement->bind_result($city);
+
+        while ($statement->fetch()) {
+            array_push($cities, $city);
+        }
+
+        $statement->close();
+
+        return $cities;
+    }
+
+    public static function getRestaurantLocation($id) {
+        $location = null;
+        
+        $fields = array(
+            RestaurantContactDB::HOUSE_NUM,
+            RestaurantContactDB::STREET,
+            RestaurantContactDB::CITY,
+            RestaurantContactDB::STATE,
+            RestaurantContactDB::ZIP_CODE,
+            RestaurantContactDB::LATITUDE,
+            RestaurantContactDB::LONGITUDE,
+            RestaurantContactDB::PHONE,
+            RestaurantContactDB::URL
+        );
+
+        $con = parent::createConnection();
+        $statement = mysqli_prepare($con,
+            ' SELECT ' . implode(', ', $fields) .
+            ' FROM ' . RestaurantContactDB::TABLE .
+            ' WHERE ' . RestaurantContactDB::ID . ' = ?'
+        );
+
+        $statement->bind_param('i', $id);
+        $statement->execute();
+
+        $statement->bind_result($houseNum, $street, $city, $state, $zipCode,
+                $latitude, $longitude, $phone, $url);
+
+        if ($statement->fetch()) {
+            $location = new Location();
+            $location->houseNum = $houseNum;
+            $location->street = $street;
+            $location->city = $city;
+            $location->state = $state;
+            $location->zipCode = $zipCode;
+            $location->latitude = $latitude;
+            $location->longitude = $longitude;
+            $location->phone = $phone;
+            $location->url = $url;
+        }
+
+        $statement->close();
+
+        return $location;
+    }
+}

@@ -1,0 +1,83 @@
+<?php
+require_once 'config.php';
+
+// Generate Slots
+$timeSlots = array();
+$startTime = $time * 1000 - 3600000; // -1 Hour
+for ($i = 0; $i < 5; $i++) {
+    $available = rand(0, 1) == 0 ? true : false;
+    $timeSlots[$startTime + $i * 1800000] = $available;
+}
+?>
+<div class="reserve-div">
+    <div id="time-slots">
+<?php
+foreach ($timeSlots as $time => $status) {
+?>
+        <button type="button" class="rest-btn btn btn-default"<?php echo $status ? '' : ' disabled=\"disabled\"'; ?> data-toggle="modal" data-target="#reserve-modal" value=""></button>
+<?php
+}
+?>
+    </div>
+</div>
+
+<div id="reserve-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content reserve-form-div well">
+            <div class="modal-header">
+                <h4 class="modal-title" style="color: goldenrod;">Reservation on <span class="reserve-div-date"></span> at <span class="reserve-div-time"></span> for <?php echo $party; ?> people</h4>
+            </div>
+            <form id="reserve-form" class="form-inline" enctype="multipart/form-data"> 
+                <div class="modal-body">
+                        <input name="custName" class="controls form-control" type="text" autocomplete="off" placeholder="Your Name">
+                        <input name="custEmail" class="controls form-control" type="text" autocomplete="off" placeholder="Email">
+                        <input name="custNumber" class="controls form-control" type="text" autocomplete="off" placeholder="Phone Number">
+                        <input type="hidden" id="time" name="time" value="" >
+                        <input type="hidden" id="party" name="party" value="<?php echo $party; ?>">
+                        <input type="hidden" id="rest" name="rest" value="<?php echo $key; ?>">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default form-control">Reserve Table</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+            <span id="modal-error" style="color:red"></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    var parent = $(".reserve-div").last();
+
+    parent.find(".rest-btn").click(function() {
+        var time = parseInt($(this).val()); // Seconds
+
+        var div = $(this).parent().parent().find(".reserve-form-div");
+        var modal = $("#reserve-modal");
+        modal.find("input[name=time]").val(time);
+
+        time *= 1000; // Milliseconds
+        modal.find(".reserve-div-date").html(getDate(time));
+        modal.find(".reserve-div-time").html(getTime(time));
+    });
+
+    var slots = [<?php echo implode(',', array_keys($timeSlots)); ?>];
+    parent.find(".rest-btn").each(function(index) {
+        var time = slots[index];
+
+        $(this).val(time / 1000);
+        $(this).html(getTime(time));
+    });
+    
+    $("#reserve-form").submit(function(e) {
+        e.preventDefault();
+
+        $.post('confirmation.php', $(this).serialize(), function(data) {
+            if (Math.random() < 0.8) {
+                $("#modal-error").html("Reservation not available!");
+            } else {
+                window.location.href = 'confirmation.php?' + $("#reserve-form").serialize();
+            }
+        });
+    });
+</script>

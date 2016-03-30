@@ -1,0 +1,101 @@
+<?php
+require_once 'includes/config.php';
+
+$input = filter_input(INPUT_POST, 'input'); // Autocomplete
+$query = filter_input(INPUT_GET, 'input');
+
+$party = filter_input(INPUT_GET, 'party');
+$date = filter_input(INPUT_GET, 'date');
+$time = filter_input(INPUT_GET, 'time');
+$lin = filter_input(INPUT_GET, 'loca');
+
+switch ($lin) {
+    case 1 : $location = "SF Bay Area";
+        break;
+    case 2 : $location = "New York City";
+        break;
+    case 3 : $location = "Chicago";
+        break;
+    case 4 : $location = "Houston";
+        break;
+    case 5 : $location = "toronto";
+        break;
+}
+
+if (isset($_SESSION['location'])) {
+    $location = $_SESSION['location'];
+} else {
+    $location = 'San Francisco';
+}
+
+if (isset($query) && strlen($query) > 0) {
+    $results = SearchEngine::search($query, $location, 10);
+    // Restaurant Page
+    if (count($results['name']) == 1) {
+        $restaurant = $results['name'][0];
+
+        if ($restaurant instanceof Restaurant) {
+            header("Location: restaurant.php?v={$restaurant->key}&d={$date}&t={$time}&p={$party}&l={$location}");
+            
+            exit;
+        }
+    }
+    // Search Results
+    require_once 'search_results.php';
+    exit;
+}
+// Suggestions
+if (isset($input) && strlen($input) > 0) {
+    $results = SearchEngine::search($input, $location, 3);
+
+    $json = array();
+    $keys = array();
+
+    $location = array();
+    foreach ($results['location'] as $city) {
+        array_push($location, array(
+            'value' => '',
+            'label' => $city,
+            'desc'  => '',
+            'icon'  => ''
+        ));
+    }
+    $json['location'] = $location;
+
+    $name = array();
+    foreach ($results['name'] as $restaurant) {
+        if (!in_array($restaurant->key, $keys)) {
+            array_push($keys, $restaurant->key);
+        } else {
+            continue;
+        }
+
+        array_push($name, array(
+            'value' => $restaurant->key,
+            'label' => $restaurant->name,
+            'desc'  => $restaurant->tags,
+            'icon'  => ''
+        ));
+    }
+    $json['name'] = $name;
+
+    $tags = array();
+    foreach ($results['tags'] as $restaurant) {
+        if (!in_array($restaurant->key, $keys)) {
+            array_push($keys, $restaurant->key);
+        } else {
+            continue;
+        }
+
+        array_push($tags, array(
+            'value' => $restaurant->key,
+            'label' => $restaurant->name,
+            'desc'  => $restaurant->tags,
+            'icon'  => ''
+        ));
+    }
+    $json['tags'] = $tags;
+
+    echo json_encode($json);
+    exit;
+}

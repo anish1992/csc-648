@@ -1,0 +1,304 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.hud    {
+    width: 100%;
+    padding: 0px 30px 0px 30px;
+}
+
+.controls {
+    // set up search box size
+    margin-top: 10px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    height: 32px;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    color:black;
+}
+.mainselection3 {
+    padding: 10px;
+    width: 85%;
+    border-radius: 5px 5px 5px 5px;
+    margin: 0 auto;
+}
+
+.mainselection2 {
+    padding: 10px;
+    width: 95%;
+    background-color: #330033;
+    border-radius: 5px 5px 5px 5px;
+    margin: 0 auto;
+    opacity: 0.85;
+}
+
+.mainselection {
+    padding: 10px;
+    width: 85%;
+    background-color: #330033;
+    border-radius: 5px 5px 5px 5px;
+    margin: 0 auto;
+    opacity: 0.65;
+}
+
+select {
+    border:0;
+    background:transparent;
+    height:32px;
+    border:1px solid #d8d8d8;
+    -webkit-appearance: none;
+}
+
+h2  {
+    color: goldenrod;
+    float:left;
+}
+
+.form-group {
+    //need over flow hide for form
+    overflow: hidden;
+    padding: 5px 0px 5px 0px;
+    
+}
+form    {
+    color: black;
+}
+
+#project {
+    // set up search box location
+    font-size: 15px;
+    font-weight: 300;
+    margin:0px;
+    padding: 0 11px 0 11px;
+    text-overflow: ellipsis;
+    width: 350px;
+}
+
+/*alert css below */
+.thelaw {
+    margin: 0;
+    width: 100%;
+    background-color: #f0ad4e;
+    border-radius: 0;
+    text-align: center;
+    border-color: #f0ad4e;
+}// alert css ends
+
+.dropdown-menu  {
+    background-color: #330033;
+}
+
+/*nav-bar css below */
+.navbar-default {
+    margin-bottom: 0;
+}
+#custom-bootstrap-menu.navbar-default .navbar-brand {
+    color: rgba(214, 179, 83, 1);
+}
+#custom-bootstrap-menu.navbar-default {
+    font-size: 16px;
+    background-color: #330033;
+    border-width: 0px;
+    border-radius: 0px;
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a {
+    color: goldenrod;
+    background-color: rgba(248, 248, 248, 0);
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:hover,
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:focus {
+    color: rgba(181, 191, 0, 1);
+    background-color: rgba(248, 248, 248, 0);
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a,
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:hover,
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:focus {
+    color: rgba(85, 85, 85, 1);
+    background-color: rgba(231, 231, 231, 1);
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle {
+    border-color: #ddd;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle:hover,
+#custom-bootstrap-menu.navbar-default .navbar-toggle:focus {
+    background-color: #ddd;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle .icon-bar {
+    background-color: #888;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle:hover .icon-bar,
+#custom-bootstrap-menu.navbar-default .navbar-toggle:focus .icon-bar {
+    background-color: #888;
+}//end of nav-bar css
+
+.slide  {
+    height: 100%;
+    clear: both;
+    width: 100%;
+    position: absolute;
+    overflow: hidden;
+}
+
+/*footer css below */
+footer {
+    position:fixed;
+    bottom: 0px;
+    clear: both;
+    width: 100%;
+    background-color: black;
+    opacity: 0.5;
+}//end of footer css
+
+.T {
+    margin:2em;
+}
+
+.profile-text {
+    padding: 0;
+    margin: 0;
+}
+
+.rest{
+    color:goldenrod;
+}
+
+.rhead{
+    height: 15em;
+}
+
+.well   {
+    background-color: #330033;
+}
+.boxed{}
+
+.restaurant-box{
+
+    border:5px solid purple;
+    width: 750px;
+    text-align:center;
+}
+
+.restaurant-box .restaurant-name{
+    font-size:200%;
+    text-align:center;
+    
+}
+
+.restaurant-box .display-box{
+    height:250px;
+    
+}
+.restaurant-box .display-box .restaurant-picture{
+    width:250px;
+    height:250px;
+    float:left;
+    
+}
+
+restaurant-box .display-box .display-info{
+    height:250px;
+    float:right;
+    
+}
+
+/* datepicker */
+.ui-datepicker-header {
+    background: #7b5a7b;
+}
+
+.ui-datepicker-calendar thead {
+    color: #7b5a7b;
+}
+
+.ui-datepicker-calendar td {
+    background: none;
+}
+
+.ui-state-default {
+    background: none !important;
+}
+
+.ui-state-active {
+    border-color: #7b5a7b !important;
+}
+
+.ui-state-highlight {
+    background: #7b5a7b !important;
+    color: #fff !important;
+    border-color: #7b5a7b !important;
+}
+
+.ui-state-hover {
+    border-color: #7b5a7b !important;
+}
+
+.ui-datepicker-next, .ui-datepicker-prev {
+    background: none !important;
+    border: none !important;
+    cursor: pointer;
+}
+
+.ui-datepicker-month, .ui-datepicker-year {
+    color: #fff;
+}
+/* end of datepicker */
+
+/* host ui elements */
+
+.card {
+    position: relative;
+    margin-bottom: 1.25em;
+    max-width: 800px;
+    margin-left: 1px;
+    margin-right: 1px;
+    border: 1em solid #e5e5e5;
+    border-radius: 1em;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.card-block {
+  padding: 1.25em;
+}
+
+.card-title {
+  margin-top: 0;
+  margin-bottom: .75em;
+}
+
+.card-subtitle {
+  margin-top: -(.75em / 2);
+  margin-bottom: 0;
+}
+
+.card-text:last-child {
+  margin-bottom: 0;
+}
+
+.card-header {
+  padding: .75em 1.25em;
+  background-color: #f5f5f5;
+  border-bottom: .0625em solid #e5e5e5;
+}
+
+.card-footer {
+  padding: 1.25em;
+  background-color: #f5f5f5;
+  border-top: .0625em solid #e5e5e5;
+}
+
+/*.card-footer:visted{
+    color: #e5e5e5;
+}*/
+
+.card-columns {
+  column-count: 3;
+  column-gap: 1.25em;
+
+}
+/* end of host ui elements */

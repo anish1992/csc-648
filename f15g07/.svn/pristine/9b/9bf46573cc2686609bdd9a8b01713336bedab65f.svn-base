@@ -1,0 +1,139 @@
+$(function () {
+
+    $("#admin-party-dropdown .dropdown-menu li a").click(function () {
+        $("#admin-party-dropdown .dropdown-party").text($(this).text());
+        $("#admin-party-dropdown .dropdown-party").attr('value', $(this).attr('value'));
+        $("#party").attr('value', $(this).attr('value'));
+    });
+
+    $("#admin-time-dropdow .dropdown-menu li a").click(function () {
+        $("#admin-time-dropdow .dropdown-time").text($(this).text());
+        $("#admin-time-dropdow .dropdown-time").attr('value', $(this).attr('value'));
+        $("#time").attr('value', $(this).text());
+    });
+
+    $(document).ready(function () { // search bar auto resize
+
+        if ($(this).width() < 400) {
+            document.getElementById('project').style.width = '12em';
+            //document.getElementById('googleMap').style.width = '200%';
+        }
+        else if ($(this).width() < 500) {
+            document.getElementById('project').style.width = '14em';
+            //document.getElementById('googleMap').style.width = '200%';
+        }
+        else if ($(this).width() < 700) {
+            document.getElementById('project').style.width = '16em';
+
+        }
+        else if ($(this).width() < 1100) {
+            document.getElementById('project').style.width = '17.5em';
+        } else {
+            document.getElementById('project').style.width = '20em';
+        }
+        $(window).resize(function () { // auto aajust what window size changes
+            if ($(this).width() < 400) {
+                document.getElementById('project').style.width = '12em';
+                //document.getElementById('googleMap').style.width = '200%';
+            }
+            else if ($(this).width() < 500) {
+                document.getElementById('project').style.width = '14em';
+                //document.getElementById('googleMap').style.width = '200%';
+            }
+            else if ($(this).width() < 700) {
+                document.getElementById('project').style.width = '16em';
+
+            }
+            else if ($(this).width() < 1100) {
+                document.getElementById('project').style.width = '17.5em';
+
+            } else {
+                document.getElementById('project').style.width = '20em';
+            }
+
+        });
+    });
+
+    $.get("action.php?action=setUserTime&value=" + new Date());
+});
+
+function getTimeSlots(key, time, party, callback) {
+    $.get("action.php?action=getTimeSlots&key=" + key + "&time=" + time + "&party=" + party, function(data) {
+        if (callback) {
+            callback(data);
+        }
+    });
+}
+
+function getDate(timeMillis) {
+    var date = new Date(timeMillis);
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var year = date.getFullYear();
+
+    return month + "/" + day + "/" + year;
+}
+
+function getTime(timeMillis) {
+    var date = new Date(timeMillis);
+    var hour = date.getHours() % 12;
+    if (hour === 0) {
+        hour = 12;
+    }
+    var minutes = ("0" + date.getMinutes()).slice(-2);
+    var period = date.getHours() < 12 ? "AM" : "PM";
+
+    return hour + ":" + minutes + " " + period;
+}
+// popup signin
+function toggle(div_id) {
+	var el = document.getElementById(div_id);
+	if ( el.style.display == 'none' ) {	el.style.display = 'block';}
+	else {el.style.display = 'none';}
+}
+function blanket_size(popUpDivVar) {
+	if (typeof window.innerWidth != 'undefined') {
+		viewportheight = window.innerHeight;
+	} else {
+		viewportheight = document.documentElement.clientHeight;
+	}
+	if ((viewportheight > document.body.parentNode.scrollHeight) && (viewportheight > document.body.parentNode.clientHeight)) {
+		blanket_height = viewportheight;
+	} else {
+		if (document.body.parentNode.clientHeight > document.body.parentNode.scrollHeight) {
+			blanket_height = document.body.parentNode.clientHeight;
+		} else {
+			blanket_height = document.body.parentNode.scrollHeight;
+		}
+	}
+	var blanket = document.getElementById('blanket');
+	blanket.style.height = blanket_height + 'px';
+	var popUpDiv = document.getElementById(popUpDivVar);
+	popUpDiv_height=blanket_height/2-150;//150 is half popup's height
+	popUpDiv.style.top = popUpDiv_height + 'px';
+}
+function window_pos(popUpDivVar) {
+	if (typeof window.innerWidth != 'undefined') {
+		viewportwidth = window.innerHeight;
+	} else {
+		viewportwidth = document.documentElement.clientHeight;
+	}
+	if ((viewportwidth > document.body.parentNode.scrollWidth) && (viewportwidth > document.body.parentNode.clientWidth)) {
+		window_width = viewportwidth;
+	} else {
+		if (document.body.parentNode.clientWidth > document.body.parentNode.scrollWidth) {
+			window_width = document.body.parentNode.clientWidth;
+		} else {
+			window_width = document.body.parentNode.scrollWidth;
+		}
+	}
+	var popUpDiv = document.getElementById(popUpDivVar);
+	window_width=window_width/2-150;//150 is half popup's width
+	popUpDiv.style.left = window_width + 'px';
+}
+function popup(windowname) {
+	blanket_size(windowname);
+	window_pos(windowname);
+	toggle('blanket');
+	toggle(windowname);
+}

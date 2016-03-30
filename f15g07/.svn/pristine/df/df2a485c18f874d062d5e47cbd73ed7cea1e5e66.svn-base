@@ -1,0 +1,18 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test page for connecting and committing</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <div>Stephen Tsay</div>
+        <div>Khanh Le</div>
+        <div>Casey Jones 2.1</div>
+        <div>Anish</div>
+        <div>Sai Undurthi </div>
+    </body>
+</html>

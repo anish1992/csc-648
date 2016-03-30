@@ -1,0 +1,125 @@
+<form class="form-inline" id="sform" method="get" action="search.php" enctype="multipart/form-data">
+    <div class="form-group">
+        <div id="admin-party-dropdown" class="dropdown">
+            <button class="btn btn-default dropdown-toggle controls form-control" type="button" data-toggle="dropdown">
+                <span value="1" class="dropdown-party">1 person</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <?php
+                $max = 8;
+                for ($i = 1; $i <= $max; $i++) {
+                    ?>
+
+                    <li ><a value="<?php echo $i; ?>"><?php echo $i; ?> person</a></li>
+                    <?php
+                }
+                ?>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="form-group"><!--date picker-->
+        <div class="input-group" style="margin-top:0.25em;">
+                <input type="text" name="date" id="datepicker" style="width: 7.5em; margin-top: 0;" class="controls form-control" placeholder="<?php echo $date ?>" >
+                <span class="input-group-addon" >
+                    <i class="glyphicon glyphicon-calendar" style="padding:0;"></i>
+                </span> 
+            </div>
+        <script>
+            //date picker // do not move when restructureing
+            $("#datepicker").datepicker({
+                minDate: new Date(),
+                onSelect: function() {
+                    setTimes();
+                }
+            });
+            $("#datepicker").datepicker("setDate", new Date());
+            $(".input-group-addon").click(function() {
+                var datepicker = $("#datepicker");
+                var visible = datepicker.datepicker("widget").is(":visible");
+                datepicker.datepicker(visible ? "hide" : "show");
+            });
+        </script>
+    </div>
+
+    <div class="form-group">
+        <div id="admin-time-dropdow" class="dropdown">
+            <button class="btn btn-default dropdown-toggle controls form-control" type="button" data-toggle="dropdown">
+                <span value="1" class="dropdown-time">11:00 AM</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+            </ul>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <input id="project" name="input" class="controls form-control input-lg w20" type="text" autocomplete="off" placeholder="Restaurant Name or Cuisine Type">
+        <input type="hidden" id="party" value="1" name="party">
+        <input type="hidden" id="time" value="11:00 AM" name="time">
+    </div>
+    <div class="form-group">
+        <button type="submit" id="btn" class="btn btn-default form-control">Find a Table</button>
+    </div>
+</form>
+
+<script>
+    $("#sform").submit(function (event) {
+        event.preventDefault();
+
+        var query = $("#sform [name=input]").val().trim();
+        if (query.length === 0) {
+            //$("#sform [name=input]").parents('li').addClass('has-warning');
+            return;
+        }
+
+        var party = $("#sform [name=party]").val();
+
+        var date = $("#sform [name=date]").val();
+        var time = $("#sform .dropdown-time").html();
+        var seconds = new Date(date + " " + time).getTime() / 1000;
+
+        window.location.href = "search.php?" + "s=" + party + "&t=" + seconds + "&q=" + query;
+    });
+    
+    setTimes();
+    
+    function setTimes() {
+        var date = $("#datepicker").val();
+
+        var currentDate = new Date();
+        var targetDate = new Date(date);
+        var currentHour = 11;
+        var maxHour = 23;
+
+        if (currentDate.getMonth() === targetDate.getMonth() && currentDate.getDay() === targetDate.getDay()) {
+            currentHour = Math.min(currentHour, Math.max(currentDate.getHours() + 1, maxHour));
+        }
+
+        var lastHour = 24;
+        $("#admin-time-dropdow .dropdown-menu").html("");
+        for (var i = currentHour; i < lastHour; i++) {
+            var hour = i === 12 ? 12 : i % 12;
+            var period = i < 12 ? "AM" : "PM";
+
+            for (var j = 0; j < 2; j++) {
+                if (i === lastHour - 1 && j === 1) {
+                    break;
+                }
+
+                var minutes = j === 0 ? "00" : "30";
+                var time = hour + ":" + minutes + " " + period;
+                $("#admin-time-dropdow .dropdown-menu").append("<li><a value=\"" + time + "\"" + ">" + time + "</a></li>")
+            }
+        }
+
+        $("#admin-time-dropdow .dropdown-time").html($("#admin-time-dropdow .dropdown-menu li").first().find("a").html());
+
+        $("#admin-time-dropdow .dropdown-menu li a").click(function () {
+            $("#admin-time-dropdow .dropdown-time").text($(this).text());
+            $("#admin-time-dropdow .dropdown-time").attr('value', $(this).attr('value'));
+            $("#time").attr('value', $(this).text());
+        });
+    }
+</script>

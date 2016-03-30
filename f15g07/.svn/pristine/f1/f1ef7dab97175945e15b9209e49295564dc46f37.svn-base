@@ -1,0 +1,196 @@
+<?php
+$title = 'Search Results';
+require_once 'includes/config.php';
+require_once 'includes/header.php';
+require_once 'includes/law.php';
+require_once 'includes/nav.php';
+
+$rest_name_counter = 0;
+$rest_alt_counter = 0;
+$rest_loc_counter = 0;
+$rank = 1;
+$num_results=0;
+$date = date("m/d/Y", $time);
+$num_results = count($results['name']) + count($results['tags']) + count($results['city']);
+
+$htime = date("h", $time);
+    $htime = $htime - 6;
+    $mtime = date("i", $time);
+    $ttime = ($htime <= 0) ? ($htime + 12) : ($htime);
+    $ttime = ($mtime == 30) ? ($ttime * 2) : (($ttime * 2) - 1);
+
+    echo "htime: ".$htime."<br>";
+    echo "mtime: ".$mtime."<br>";
+    echo "ttime: ".$ttime."<br>";
+$keys = array();
+?>
+<br>
+<center><form class="form-inline"  method="get" action="confirmation.php" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <select name="party" class="controls form-control" >
+                            <?php
+                            $max = 20;
+                            for ($i = 1; $i <= $max; $i++) {
+                                ?>
+                                <option value="<?php echo $i; ?>" <?php echo $i == $party ? "selected=\"selected\"" : "" ?>><?php echo $i; ?> person</option>
+                                <?php
+                            }
+                            ?>
+                            <option value="<?php echo $max + 1; ?>">Larger party</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group"><!--date picker-->
+                        <input type="text" name="date" id="datepicker2" style="width: 7.5em;" class="controls form-control" placeholder="<?php echo $date ?>" >
+                        <script>
+                            //date picker // do not move when restructureing
+                            $("#datepicker2").datepicker();
+                        </script>
+                    </div>
+
+                    <div class="form-group">
+                        <select name="time" class="controls form-control">
+                            <?php
+                            $max = 23;
+                            for ($i = 1; $i <= $max; $i++) {
+                                $hour = round(10 + $i / 2);
+                                $period = $hour < 12 ? 'AM' : 'PM';
+                                $hour %= 12;
+                                if ($hour == 0) {
+                                    $hour = 12;
+                                }
+                                $minutes = $i % 2 == 0 ? '30' : '00';
+                                ?>
+                                <option value="<?php echo $i; ?>" <?php echo $i == $time ? "selected=\"selected\"" : "" ?>>
+                                    <?php echo "{$hour}:{$minutes} {$period}"; ?></option>
+                                <?php
+                            }
+                            ?>
+
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-default form-control">find a table</button>
+
+                </form>
+    <strong><?php echo $num_results;?></strong><?php echo " results found for ";?><strong><?php echo $query;?></strong>
+               
+</center>
+<br>
+
+<?php
+foreach ($results['name'] as $restaurant) {
+    if ($rest_name_counter == 0) {
+        $rest_name_counter++;
+    }
+    display($rank, $restaurant, $party, $time, $lin);
+    array_push($keys, $restaurant->key);
+    $rank++;
+    echo "<br>";
+}
+
+foreach ($results['tags'] as $restaurant) {
+    if (in_array($restaurant->key, $keys)) {
+        continue;
+    }
+    if ($rest_alt_counter == 0) {
+        $rest_alt_counter++;
+    }
+    display($rank, $restaurant, $party, $time, $lin);
+    array_push($keys, $restaurant->key);
+    $rank++;
+    echo "<br>";
+}
+foreach ($results['city'] as $restaurant) {
+    if (in_array($restaurant->key, $keys)) {
+        continue;
+    }
+    if ($rest_loc_counter == 0) {
+        $rest_loc_counter++;
+    }
+    display($rank, $restaurant, $party, $time, $lin);
+    $rank++;
+}
+
+if (count($keys) == 0) {
+    ?><center>
+        No Results.  Please try again.
+    </center>
+    <?php
+}
+
+
+require_once 'includes/footer.php';
+
+function display($rank, $restaurant, $party, $time, $lin) {
+    ?>
+    <center>
+        <div class='restaurant-box' id="<?php echo $restaurant->key ?>">
+
+            <div class='display-box'>
+                
+                <div class="row">
+                    <div class="col-md-4"><a href="restaurant.php?v=<?php echo $restaurant->key; ?>&s=<?php echo $party; ?>&t=<?php echo $time; ?>&l=<?php echo $lin; ?>"><img class='restaurant-picture' src=<?php echo ImageHelper::getMainImage($restaurant->key); ?>></a></div>
+
+                    <div class="col-md-8">
+                        <div><?php echo $rank . ".  "; ?><a href="restaurant.php?v=<?php echo $restaurant->key; ?>&s=<?php echo $party; ?>&t=<?php echo $time; ?>&l=<?php echo $lin; ?>"><?php echo $restaurant->name ?></a></div>
+                        <div><small><?php echo $restaurant->shortDesc; ?></small><br></div>    
+                        <div class="row">
+                            <div class ="col-xs-7">
+                                <div class="text-left">
+                                <div>$$</div>
+                                <div><?php
+    $counter = 0;
+    $days = array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
+    $days_abr = array("Sun", "Mon", "Tues", "Weds", "Thurs", "Fri", "Sat");
+    foreach ($restaurant->hours as $day) {
+        if (date("l") == $days[$counter]) {
+            $start = $day[0];
+            $end = $day[1];
+            $start_str = substr($start, 0, -3);
+            $end_str = substr($end, 0, -3);
+            echo $days_abr[$counter] . ": " . $start_str . " - " . $end_str . "<br>";
+        }
+
+        $counter++;
+    }
+    ?></div>
+                            </div>
+                            </div>
+                            <div class="col-xs-5">
+                                <div class="text-right">
+                                <div>San Francisco</div> 
+                                <div>(415)555-3456</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='display-info' >
+
+
+
+                            <div class ="text-center">
+                                <a class="btn btn-default" href="confirmation.php?" role="button">11:00</a>
+                                <a class="btn btn-default" href="confirmation.php?" role="button">11:30</a>
+                                <a class="btn btn-default" href="confirmation.php?" role="button">12:00</a>
+                                <a class="btn btn-default" href="confirmation.php?" role="button">12:30</a>
+                                </div>
+
+
+
+                            <div class='description-box'>
+                                <p style='font-size:12px'>Search Tags:
+                                    <span style='font-size:12px'><small><?php echo $restaurant->tags ?></small></span>
+                                </p>                  
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+            </div>
+
+
+
+        </div>
+    </center>
+    <?php
+}

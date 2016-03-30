@@ -1,0 +1,247 @@
+<?php
+require_once 'includes/config.php';
+$title = 'V.P.';
+require_once 'includes/header.php';
+require_once 'includes/law.php';
+require_once 'includes/nav.php';
+?>
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyC98uLK_ggwQEynwsXGbAc3w2cE_tojOa4"></script>
+
+<?php
+$value = filter_input(INPUT_GET, 'v');
+$party = filter_input(INPUT_GET, 's');
+$time = filter_input(INPUT_GET, 't');
+$location = filter_input(INPUT_GET, 'l');
+
+$restaurant = RestaurantDB::getRestaurantByKey($value);
+
+if ($restaurant != null) {
+    $date = date("m/d/Y", $time);
+
+    $htime = date("h", $time);
+    $htime = $htime - 6;
+    $mtime = date("i", $time);
+    $ttime = ($htime <= 0) ? ($htime + 12) : ($htime);
+    $ttime = ($mtime == 30) ? ($ttime * 2) : (($ttime * 2) - 1);
+
+    display($restaurant, $date, $ttime, $party);
+} else {
+    echo 'Restaurant does not exist!';
+}
+
+function display($restaurant, $date, $time, $party) {
+    ?>
+
+    <script >
+        //$("#drop-loc").val('\"'++'\"');
+        function initialize() {
+            var mapProp = {
+                center: new google.maps.LatLng(37.710418, -122.244638),
+                zoom: 8,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+        }
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+    <div style="height:1em;" class="container col-xs-9">   </div>
+    <div class="hud col-xs-4">
+        <div class="mainselection2 rest rhead">
+
+            <h1><?php echo $restaurant->name ?></h1>    
+        </div>
+    </div>
+
+    <div style="height:1em;" class="container col-xs-9">  </div>
+
+    <div class="hud col-xs-4">
+        <div class="mainselection2 row">
+            <?php
+
+            function tt($i) {
+                //$i = $i;
+                $hour = round(10 + $i / 2);
+                $hour %= 12;
+                if ($hour == 0) {
+                    $hour = 12;
+                }
+                echo $hour;
+                echo $i % 2 == 0 ? ' : 30' : ' : 00';
+                echo $i > 3 && $i < 27 ? ' PM' : ' AM';
+            }
+            ?>
+
+            <center><form class="form-inline"  method="get" action="reserve.php" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <select name="party" class="controls form-control" >
+                            <?php
+                            $max = 20;
+                            for ($i = 1; $i <= $max; $i++) {
+                                ?>
+                                <option value="<?php echo $i; ?>" <?php echo $i == $party ? "selected=\"selected\"" : "" ?>><?php echo $i; ?> person</option>
+                                <?php
+                            }
+                            ?>
+                            <option value="<?php echo $max + 1; ?>">Larger party</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group"><!--date picker-->
+                        <input type="text" name="date" id="datepicker2" style="width: 7.5em;" class="controls form-control" placeholder="<?php echo $date ?>" >
+                        <script>
+                            //date picker // do not move when restructureing
+                            $("#datepicker2").datepicker();
+                        </script>
+                    </div>
+
+                    <div class="form-group">
+                        <select name="time" class="controls form-control">
+                            <?php
+                            $max = 23;
+                            for ($i = 1; $i <= $max; $i++) {
+                                $hour = round(10 + $i / 2);
+                                $period = $hour < 12 ? 'AM' : 'PM';
+                                $hour %= 12;
+                                if ($hour == 0) {
+                                    $hour = 12;
+                                }
+                                $minutes = $i % 2 == 0 ? '30' : '00';
+                                ?>
+                                <option value="<?php echo $i; ?>" <?php echo $i == $time ? "selected=\"selected\"" : "" ?>>
+                                    <?php echo "{$hour}:{$minutes} {$period}"; ?></option>
+                                <?php
+                            }
+                            ?>
+
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-default form-control">find a table</button>
+
+                </form></center>
+            <center>
+                <h4 style="color: goldenrod;">Availability on <?php echo $date; ?> around <?php tt($time); ?> for <?php echo $party; ?> people</h4>
+            </center>
+
+            <center>  
+                <button type="button" data-toggle="collapse" data-target="#rest1" aria-expanded="false" aria-controls="rest1" class="btn btn-default T" id="b1" <?php if (($time - 2) <= 0) echo 'disabled=\"disabled\"' ?>>
+                    <?php tt($time - 2); ?></button>
+                <button type="button" data-toggle="collapse" data-target="#rest2" aria-expanded="false" aria-controls="rest2" class="btn btn-default T" id="b2" <?php if (($time - 1) <= 0) echo 'disabled=\"disabled\"' ?>>
+                    <?php tt($time - 1); ?></button>
+
+                <button type="button" data-toggle="collapse" data-target="#rest3" aria-expanded="false" aria-controls="rest3" class="btn btn-default T" id="b3">
+                    <?php tt($time); ?></button>
+
+                <button type="button" data-toggle="collapse" data-target="#rest4" aria-expanded="false" aria-controls="rest4" class="btn btn-default T" id="b4" <?php if (($time + 1) >= 25) echo 'disabled=\"disabled\"' ?>>
+                    <?php tt($time + 1); ?></button>
+
+                <button type="button" data-toggle="collapse" data-target="#rest5" aria-expanded="false" aria-controls="rest5" class="btn btn-default T" id="b5" <?php if (($time + 2) >= 25) echo 'disabled=\"disabled\"' ?>>
+                    <?php tt($time + 2); ?></button>
+                
+                <div style="height: 2em;"></div>
+                <div class="collapse" id="rest1">
+                    <div class="well">
+                        <center>
+                            <h4 style="color: goldenrod;">reservation on <?php echo $date; ?> at <?php tt($time - 2); ?> for <?php echo $party; ?> people</h4>
+                        </center>
+                        <form class="form-inline" method="get" action="reserve.php" enctype="multipart/form-data"> 
+                            <input name="custName" class="controls form-control" type="text" autocomplete="off" placeholder="Your Name">
+                            <input name="custEmail" class="controls form-control" type="text" autocomplete="off" placeholder="Email">
+                            <input name="custNumber" class="controls form-control" type="text" autocomplete="off" placeholder="Phone Number">
+                            <input type="hidden" id="time" name="time" value="<?php echo tt($time - 2); ?>" >
+                            <button type="submit" class="btn btn-default form-control">reserve table</button>
+                        </form>
+
+                    </div>
+                </div>
+                
+                <div class="collapse" id="rest2">
+                    <div class="well">
+                        <center>
+                            <h4 style="color: goldenrod;">reservation on <?php echo $date; ?> at <?php tt($time - 1); ?> for <?php echo $party; ?> people</h4>
+                        </center>
+                        <form class="form-inline" method="get" action="reserve.php" enctype="multipart/form-data"> 
+                            <input name="custName" class="controls form-control" type="text" autocomplete="off" placeholder="Your Name">
+                            <input name="custEmail" class="controls form-control" type="text" autocomplete="off" placeholder="Email">
+                            <input name="custNumber" class="controls form-control" type="text" autocomplete="off" placeholder="Phone Number">
+                            <input type="hidden" id="time" name="time" value="<?php echo tt($time - 1); ?>">
+                            <button type="submit" class="btn btn-default form-control">reserve table</button>
+                        </form>
+
+                    </div>
+                </div>
+                <div class="collapse" id="rest3">
+                    <div class="well">
+                        <center>
+                            <h4 style="color: goldenrod;">reservation on <?php echo $date; ?> at <?php tt($time); ?> for <?php echo $party; ?> people</h4>
+                        </center>
+                        <form class="form-inline" method="get" action="reserve.php" enctype="multipart/form-data"> 
+                            <input name="custName" class="controls form-control" type="text" autocomplete="off" placeholder="Your Name">
+                            <input name="custEmail" class="controls form-control" type="text" autocomplete="off" placeholder="Email">
+                            <input name="custNumber" class="controls form-control" type="text" autocomplete="off" placeholder="Phone Number">
+                            <input type="hidden" id="time" name="time" value="<?php echo tt($time); ?>" >
+
+                            <button type="submit" class="btn btn-default form-control">reserve table</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="collapse" id="rest4">
+                    <div class="well">
+                        <center>
+                            <h4 style="color: goldenrod;">reservation on <?php echo $date; ?> at <?php tt($time + 1); ?> for <?php echo $party; ?> people</h4>
+                        </center>
+                        <form class="form-inline" method="get" action="reserve.php" enctype="multipart/form-data"> 
+                            <input name="custName" class="controls form-control" type="text" autocomplete="off" placeholder="Your Name">
+                            <input name="custEmail" class="controls form-control" type="text" autocomplete="off" placeholder="Email">
+                            <input name="custNumber" class="controls form-control" type="text" autocomplete="off" placeholder="Phone Number">
+                            <input type="hidden" id="time" name="time" value="<?php echo tt($time + 1); ?>">
+
+                            <button type="submit" class="btn btn-default form-control">reserve table</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="collapse" id="rest5">
+                    <div class="well">
+                        <center>
+                            <h4 style="color: goldenrod;">reservation on <?php echo $date; ?> at <?php tt($time + 2); ?> for <?php echo $party; ?> people</h4>
+                        </center>
+                        <form class="form-inline" method="get" action="reserve.php" enctype="multipart/form-data"> 
+                            <input name="custName" class="controls form-control" type="text" autocomplete="off" placeholder="Your Name">
+                            <input name="custEmail" class="controls form-control" type="text" autocomplete="off" placeholder="Email">
+                            <input name="custNumber" class="controls form-control" type="text" autocomplete="off" placeholder="Phone Number">
+                            <input type="hidden" id="time" name="time" value="<?php echo tt($time + 2); ?>" >
+
+                            <button type="submit" class="btn btn-default form-control">reserve table</button>
+                        </form>
+                    </div>
+                </div>
+
+            </center>
+
+
+        </div>
+    </div>
+
+    <div style="height:1em;" class="container col-xs-9">   </div>
+
+    <div class="hud col-xs-4">
+        <div class="mainselection2 rest">
+
+            <div class="col-md-6">
+                <h3>About <?php echo $restaurant->name ?></h3>
+                <p></p>
+                <p><?php echo $restaurant->desc ?></p>
+                <h3>Cuisine </h3>
+                <p><?php echo $restaurant->tags ?></p>
+            </div>
+
+            <div id="googleMap" style="width:50%;height:250px;"></div>
+
+        </div>
+    </div>
+
+    <div style="height:1em;" class="container col-xs-9">   </div>
+
+    <?php
+}
+
+require_once 'includes/footer.php';

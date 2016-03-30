@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<!--
+alert temp
+-->
+
+<div class="thelaw alert alert-success">  
+    
+    <a href="http://cs.sfsu.edu/"><span class="glyphicon glyphicon-warning-sign" ></span> SFSU Software Engineering CSc 648/848 Project. For Demonstration Only</a>
+    <button type="button" class="close" data-dismiss="alert"  aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>

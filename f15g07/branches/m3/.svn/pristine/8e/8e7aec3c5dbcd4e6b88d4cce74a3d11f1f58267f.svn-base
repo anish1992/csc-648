@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * Description of Location
+ *
+ * @author Gary Ng
+ */
+class Location {
+
+    public $houseNum;
+    public $street;
+    public $city;
+    public $state;
+    public $zipCode;
+    public $latitude;
+    public $longitude;
+    public $phone;
+    public $url;
+}

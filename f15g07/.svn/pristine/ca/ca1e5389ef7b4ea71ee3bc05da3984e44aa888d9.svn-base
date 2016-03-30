@@ -1,0 +1,65 @@
+<?php
+/**
+ * ValidateLogin retrieves the Username and Password information from Lgin and does the authentication looking into the Database.
+ *
+ */
+session_start(); //Starting session
+$servername="sfsuswe.com";
+$username="f15g07";
+$passw="sfsu2015";
+$database="student_f15g07";
+
+// Grab User submitted information
+
+$name_user = $_POST["luser_name"];
+$pass = $_POST["luser_pass"];
+
+if (!isset($name_user) && !isset($pass)) {
+    exit;
+}
+
+$name_user = trim($name_user);
+$pass = trim($pass);
+
+// Connect to the database
+$con = new mysqli($servername,$username,$passw,$database);
+// Make sure we connected succesfully
+if($con->connect_error)
+{
+    die("Connection Failed:".$con->connect_error);
+}
+    
+    $pass = md5($pass);
+     $result = $con->query("SELECT * FROM login  WHERE user_name = '$name_user' AND user_pass = '$pass'");
+     if (!$result) { // add this check.
+    die('Invalid query: ' . mysql_error());
+}
+     
+    // output data of each row
+
+
+    if ($result->num_rows > 0){
+    while ($row = mysqli_fetch_array($result)) {
+        $_SESSION['first_name']  = $row['first_name'];
+        $_SESSION['last_name']   = $row['last_name'];
+        $_SESSION['user_email']  = $row['user_email'];
+        $_SESSION['user_pass']   = $row['user_pass'];
+        $_SESSION['user_confirm']= $row['user_confirm'];
+        $_SESSION['user_name']   = $row['user_name'];
+        $_SESSION['user_phone']  = $row['user_phone'];
+    
+        header("location: profile.php"); //Redirecting to User profile.
+       // printf ("%s (%s)\n",$row['user_name'],$row['user_pass']);
+        
+         //echo"You are a validated user.";
+    
+     
+        }
+    
+    }
+    else
+         echo "Invalid User";
+     
+     
+
+?>

@@ -1,0 +1,24 @@
+
+<!--**
+ * User lands on this page after he Log's in.
+ *
+ * @author Sai Krishna
+ */-->
+
+<html>
+<head>
+<title>Your Home Page</title>
+</head>
+<body>
+
+    <h1>Welcome : <?php session_start(); echo $_SESSION['first_name']; 
+    echo $_SESSION['last_name'];
+    ?></h1>
+    <b id="logout"><a href="logout.php">Log Out</a></b>
+</div>
+</body>
+</html> 
+
+ 
+ 
+

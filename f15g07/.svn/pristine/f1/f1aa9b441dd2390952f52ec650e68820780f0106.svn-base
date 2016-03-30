@@ -1,0 +1,53 @@
+<?php
+
+/**
+ *  InsertUserInfoDB implodes the user data in the database from Signup page.
+ *
+ * @author sai
+ */
+class InsertUserInfoDB extends DatabaseHelper{
+    const TABLE = '`login`';
+    const FIRST_NAME = '`first_name`';
+    const LAST_NAME = '`last_name`';
+    const EMAIL = '`user_email`';
+    const PASSWORD = '`user_pass`';
+    const CONFIRM_PASSWORD = '`user_confirm`';
+    const USER_NAME = '`user_name`';
+    const PHONE_NUMBER = '`user_phone`';
+
+public static function insertUserInfo($firstname,$lastname,$email,$password,
+        $confirmpassword,$username,$userphone){
+    
+    $user = null;
+        
+        $fields = array(
+            InsertUserInfoDB::FIRST_NAME,
+            InsertUserInfoDB::LAST_NAME,
+            InsertUserInfoDB::EMAIL,
+            InsertUserInfoDB::PASSWORD,
+            InsertUserInfoDB::CONFIRM_PASSWORD,
+            InsertUserInfoDB::USER_NAME,
+            InsertUserInfoDB::PHONE_NUMBER
+        );
+
+        $con = parent::createConnection();
+        $statement = mysqli_prepare($con,
+            ' INSERT INTO ' . InsertUserInfoDB::TABLE . ' (' .
+            implode(', ', $fields) .
+            ') VALUES (?, ?, ?, ?, ?, ?, ?)'
+        );
+
+        $statement->bind_param('sssssss', $firstname, $lastname, $email, $password, $confirmpassword,
+                $username, $userphone);
+        $statement->execute();
+        
+       /* if ($statement->affected_rows > 0) {
+            $id = $statement->insert_id;
+            $restaurant = InsertUserInfoDB::getRestaurantById($id);
+        }*/
+
+        $statement->close();
+        
+        //return $restaurant;
+    }
+}

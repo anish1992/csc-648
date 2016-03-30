@@ -1,0 +1,15 @@
+<div style="height:20px;" class="container col-xs-9">   </div>
+</body>
+<footer>
+    <div id="shortcuts-dropdown" class="dropup">
+        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+            <span class="dropdown-label">Shortcuts (Debug)</span>
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="admin.php">Web Admin Page</a></li>
+            <li><a href="host.php">Host Page</a></li>
+        </ul>
+    </div>
+</footer>
+</html>

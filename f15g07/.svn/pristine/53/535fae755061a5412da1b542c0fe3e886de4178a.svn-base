@@ -1,0 +1,141 @@
+<?php
+
+/**
+ * Login takes in the Username and Password from user and redirects to ValidateLogin for authentication.
+ *
+ * @author Sai Krishna
+ */
+
+$title = 'Welcome to AlpacaTable!';
+require_once 'includes/header.php';
+require_once 'includes/law.php';
+require_once 'includes/nav.php';
+
+?>
+
+    <div class="sidebar-wrapper2" align="center" id="sidebar-nav">
+        <li class="sidebar-brand">
+            <div class="container2">
+                <div class="row2">
+                    <div class="box_setup2">
+                        <div class="account-wall3">
+                            <h1 class="text-center login-title" style="text-align: center; font-family: cursive; color:#5a636e">LOGIN</h1>
+
+                                          <center><div>
+                                    
+                                                  <form action="validate_login.php" method="POST">
+                                                      <table border='2'>
+                                                          <tr>
+                                                              <td>username</td>
+                                                              <td><input type='text' name='luser_name' size'20'></td>
+                                                          </tr>
+                                                          <tr>
+                                                              <td>password</td>
+                                                              <td><input type='password' name='luser_pass' size'20'></td>
+                                                          </tr>
+                                                      </table>
+                                                      <button  type="submit" value="Submit">
+                                                                        LOGIN </button>
+                                                  </form>
+                
+                                    
+<!--?php
+
+//
+                                session_start(); 
+                                if( $_SESSION["logging"]&& $_SESSION["logged"])
+                                {
+                                     print_secure_content();
+                                }
+                                else {
+                                    if(!$_SESSION["logging"])
+                                    {  
+                                    $_SESSION["logging"]=true;
+                                    loginform();
+                                    }
+                                       else if($_SESSION["logging"])
+                                       {
+                                         $number_of_rows=checkpass();
+                                         if($number_of_rows==1)
+                                            {	
+                                                 $_SESSION[user]=$_GET[username];
+                                                 $_SESSION[logged]=true;
+                                                 print"<h1>you have logged in successfully</h1>";
+                                                 print_secure_content();
+                                            }
+                                            else{
+                                                print "Wrong pawssword or username, please try again";	
+                                                loginform();
+                                            }
+                                        }
+                                     }
+
+                                function loginform()
+                                {
+                                print "Please enter your login information to proceed with our site";
+                                print ("<table border='2'><tr><td>Username</td><td><input type='text' name='username' size'20'></td></tr><tr><td>Password</td><td><input type='password' name='password' size'20'></td></tr></table>");
+                                print "<input type='submit' >";	
+                                print "<center><h1><a href='signup.php'>Register now!</a></h1></center>";
+                                    
+       
+
+                                }
+
+                                function checkpass()
+                                {
+                                $servername="sfsuswe.com";
+                                $username="f15g07";
+                                $pass="sfsu2015";
+                                $conn=  mysql_connect($servername,$username,$pass)or die(mysql_error());
+                                mysql_select_db("student_f15g07",$conn);
+                                $sql="select * from login where user_name='$_GET[username]' and user_pass='$_GET[password]'";
+                                $result=mysql_query($sql,$conn) or die(mysql_error());
+                                return  mysql_num_rows($result);
+                                }
+
+                                function print_secure_content()
+                                {
+                                        print("<b><h1>hi mr.$_SESSION[user]</h1>");
+                                    print "<br><h2>Only a logged in user can see this</h2><br><a href='logout.php'>Logout</a><br>";	
+
+                                }
+?>-->
+
+                                    <!--<ul style="alignment-adjust: central"> 
+                                    
+                                    
+                                    <li align="pull-left">
+                                        <a class="btn btn-social-icon btn-twitter">
+                                            <span class="fa fa-twitter"></span></a>
+                                    </li>
+                                    <li align="pull-center">
+                                        <a class="btn btn-social-icon btn-facebook">
+                                            <span class="fa fa-facebook"></span></a>
+                                    </li>
+                                    <li align="pull-center">
+                                        <a class="btn btn-social-icon btn-google">
+                                            <span class="fa fa-google"></span></a>
+                                    </li>
+                                    <li align="pull-right">
+                                        <a class="btn btn-social-icon btn-reddit">
+                                            <span class="fa fa-reddit"></span></a>
+                                    </li>
+                                    
+                                    
+                                </ul>-->
+                                   <!-- <br>
+                                    <script>
+                                        document.getElementsByClassName('dropdown')[0].style.visibility = 'hidden';
+                                        document.getElementsByClassName('dropup')[0].style.visibility = 'hidden';
+                                    </script>-->
+                                    </div></center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </div>
+
+    
+
+<?php require_once 'includes/footer.php';

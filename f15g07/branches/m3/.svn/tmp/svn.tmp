@@ -1,0 +1,40 @@
+<!--
+navbar
+-->
+<div id="custom-bootstrap-menu" class="navbar navbar-default " role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header"><a class="navbar-brand" style="color:goldenrod;" href="#">AT</a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-menubuilder"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+            </button>
+        </div>
+        <!-- location set up -->
+        <div class="collapse navbar-collapse navbar-menubuilder">
+            
+            <ul class="nav navbar-nav" form ="sform">
+                <li class="dropdown">
+                    
+                    <a value="0" href="index.php" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span id="td1" class="glyphicon glyphicon-map-marker"></span>
+                        select locations
+                        <span id="td1" class="caret"></span>
+                    </a>
+                    
+                    <ul class="nav navbar-nav dropdown-menu">
+                        <li><a value="1" >San Francisco Bay Area</a></li>
+                        <li><a value="2" >New York City</a></li>
+                        <li><a value="3" >Chicago</a></li>
+                        <li><a value="4" >Houston</a></li>
+                        <li><a value="5" >Toronto</a></li>
+                    </ul>
+                </li>
+                
+            </ul>
+            <ul class="nav navbar-nav navbar-right">   
+                <li><a href="error.php">Sign in</a>
+                </li>
+                <li><a href="error.php">Sign up</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

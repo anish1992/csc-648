@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * Description of SearchEngine
+ *
+ * @author Gary Ng
+ */
+class SearchEngine {
+
+    public static function search($query, $location, $limit) {
+        $results = array();
+
+        $results['location'] = RestaurantContactDB::getCities($query, $limit);
+
+        $results['name'] = RestaurantDB::searchByName($query, $location, $limit);
+
+        $tags = explode(' ', $query);
+        $results['tags'] = RestaurantDB::searchByTags($tags, $location, $limit);
+
+        return $results;
+    }
+}

@@ -1,0 +1,55 @@
+<?php
+
+$title = 'Search Results';
+require_once 'includes/header.php';
+require_once 'includes/law.php';
+require_once 'includes/nav.php';
+
+if (!isset($results) || count($results) == 0) {
+    echo "No Results";
+    
+} else {
+    echo "<div style='font-size:24px'>Direct Matches:";
+    foreach ($results['name'] as $restaurant) {
+        display($restaurant);
+        echo "";
+    }
+
+    echo 'Alternate Suggestions:';
+    foreach ($results['tags'] as $restaurant) {
+        display($restaurant);
+    }
+}
+
+require_once 'includes/footer.php';
+
+function display($restaurant) {
+?>
+    
+        <div class='restaurant-box' id="<?php echo $restaurant->key ?>">
+            
+            <div class='restaurant-name' 
+                <h1><?php echo $restaurant->name ?></h1>
+            </div>
+            <div style='font-size:18px'>
+                <p><?php echo $restaurant->shortDesc ?></p>
+            </div>
+            <div class='display-box'>
+                <img class='restaurant-picture' src='https://upload.wikimedia.org/wikipedia/commons/2/2d/SFSU_Campus_JPL_Library_Nov2012.JPG'>
+                <div class='display-info' >
+                    <h3>reservation information</h3>
+                    <p>Buttons go here</p>
+                    <p>price ranges</p>
+                    <p>hours</p>
+                    <p>contact information </p>
+                </div>
+            </div>
+            <p> </p>
+            <p style='font-size:14px' align='left'><?php echo $restaurant->desc ?></p>
+            <p align='left' style='font-size:16px'>Restaurant Search Tags:
+            <span style='font-size:12px'><?php echo $restaurant->tags ?></span>
+            </p>
+        </div>
+    
+<?php
+}

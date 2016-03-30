@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * Restaurant stores all restaurant related information.
+ *
+ * @author Gary Ng
+ */
+class Restaurant {
+    
+    public $id;
+    public $key;
+    public $name;
+    public $description;
+    public $tags;
+    public $priceMin;
+    public $priceMax;
+    public $numTables;
+    public $location;
+
+    function __construct($id) {
+        $this->id = $id;
+    }
+}

@@ -1,0 +1,114 @@
+$(function () {
+    
+    $("#admin-party-dropdown .dropdown-menu li a").click(function () {
+        $("#admin-party-dropdown .dropdown-party").text($(this).text());
+        $("#admin-party-dropdown .dropdown-party").attr('value', $(this).attr('value'));
+        $("#party").attr('value', $(this).attr('value'));
+    });
+    
+    $("#admin-time-dropdow .dropdown-menu li a").click(function () {
+        $("#admin-time-dropdow .dropdown-time").text($(this).text());
+        $("#admin-time-dropdow .dropdown-time").attr('value', $(this).attr('value'));
+        $("#time").attr('value', $(this).text());
+    });
+
+    $(document).ready(function () { // search bar auto resize
+
+        if ($(this).width() < 400) {
+            document.getElementById('project').style.width = '12em';
+            //document.getElementById('googleMap').style.width = '200%';
+        }
+        else if ($(this).width() < 500) {
+            document.getElementById('project').style.width = '14em';
+            //document.getElementById('googleMap').style.width = '200%';
+        }
+        else if ($(this).width() < 700) {
+            document.getElementById('project').style.width = '16em';
+            
+        }
+        else if ($(this).width() < 1100) {
+            document.getElementById('project').style.width = '17.5em';
+        } else {
+            document.getElementById('project').style.width = '20em';
+        }
+        $(window).resize(function () { // auto aajust what window size changes
+            if ($(this).width() < 400) {
+                document.getElementById('project').style.width = '12em';
+                //document.getElementById('googleMap').style.width = '200%';
+            }
+            else if ($(this).width() < 500) {
+                document.getElementById('project').style.width = '14em';
+                //document.getElementById('googleMap').style.width = '200%';
+            }
+            else if ($(this).width() < 700) {
+                document.getElementById('project').style.width = '16em';
+                
+            }
+            else if ($(this).width() < 1100) {
+                document.getElementById('project').style.width = '17.5em';
+
+            } else {
+                document.getElementById('project').style.width = '20em';
+            }
+
+        });
+    });
+
+
+    // ask
+    $("#b1").click(function () {
+        $(this).removeClass("in");
+        $('#rest2').removeClass("in");
+        $('#rest3').removeClass("in");
+        $('#rest4').removeClass("in");
+        $('#rest5').removeClass("in");
+    });
+    $("#b2").click(function () {
+        $(this).removeClass("in");
+        $('#rest1').removeClass("in");
+        $('#rest3').removeClass("in");
+        $('#rest4').removeClass("in");
+        $('#rest5').removeClass("in");
+    });
+    $("#b3").click(function () {
+        $(this).removeClass("in");
+        $('#rest1').removeClass("in");
+        $('#rest2').removeClass("in");
+        $('#rest4').removeClass("in");
+        $('#rest5').removeClass("in");
+    });
+    $("#b4").click(function () {
+        $(this).removeClass("in");
+        $('#rest1').removeClass("in");
+        $('#rest2').removeClass("in");
+        $('#rest3').removeClass("in");
+        $('#rest5').removeClass("in");
+    });
+    $("#b5").click(function () {
+        $(this).removeClass("in");
+        $('#rest1').removeClass("in");
+        $('#rest2').removeClass("in");
+        $('#rest3').removeClass("in");
+        $('#rest4').removeClass("in");
+    });
+
+
+    $("#sform").submit(function (event) {
+        event.preventDefault();
+
+        var query = $("#sform [name=input]").val().trim();
+        if (query.length === 0) {
+            
+            return;
+        }
+
+        var party = $("#sform [name=party]").val();
+        var date = $("#sform [name=date]").val();
+        var time = $("#sform [name=time]").val();
+        var seconds = new Date(date + " " + time).getTime() / 1000;
+
+        window.location.href = "search.php?" + "s=" + party + "&t=" + seconds + "&q=" + query;
+    });
+});
+
+//google maps

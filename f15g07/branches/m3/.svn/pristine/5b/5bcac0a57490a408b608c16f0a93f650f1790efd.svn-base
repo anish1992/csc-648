@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * Location stores all location related information for a restaurant.
+ *
+ * @author Gary Ng
+ */
+class Location {
+
+    public $houseNum;
+    public $street;
+    public $city;
+    public $state;
+    public $zipCode;
+    public $latitude;
+    public $longitude;
+    public $phone;
+    public $url;
+}

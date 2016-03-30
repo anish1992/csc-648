@@ -1,0 +1,137 @@
+$(function () {
+    
+    $("#admin-party-dropdown .dropdown-menu li a").click(function () {
+        $("#admin-party-dropdown .dropdown-party").text($(this).text());
+        $("#admin-party-dropdown .dropdown-party").attr('value', $(this).attr('value'));
+        $("#party").attr('value', $(this).attr('value'));
+    });
+    
+    $("#admin-time-dropdow .dropdown-menu li a").click(function () {
+        $("#admin-time-dropdow .dropdown-time").text($(this).text());
+        $("#admin-time-dropdow .dropdown-time").attr('value', $(this).attr('value'));
+        $("#time").attr('value', $(this).text());
+    });
+
+    $(document).ready(function () { // search bar auto resize
+
+        if ($(this).width() < 400) {
+            document.getElementById('project').style.width = '12em';
+            //document.getElementById('googleMap').style.width = '200%';
+        }
+        else if ($(this).width() < 500) {
+            document.getElementById('project').style.width = '14em';
+            //document.getElementById('googleMap').style.width = '200%';
+        }
+        else if ($(this).width() < 700) {
+            document.getElementById('project').style.width = '16em';
+            
+        }
+        else if ($(this).width() < 1100) {
+            document.getElementById('project').style.width = '17.5em';
+        } else {
+            document.getElementById('project').style.width = '20em';
+        }
+        $(window).resize(function () { // auto aajust what window size changes
+            if ($(this).width() < 400) {
+                document.getElementById('project').style.width = '12em';
+                //document.getElementById('googleMap').style.width = '200%';
+            }
+            else if ($(this).width() < 500) {
+                document.getElementById('project').style.width = '14em';
+                //document.getElementById('googleMap').style.width = '200%';
+            }
+            else if ($(this).width() < 700) {
+                document.getElementById('project').style.width = '16em';
+                
+            }
+            else if ($(this).width() < 1100) {
+                document.getElementById('project').style.width = '17.5em';
+
+            } else {
+                document.getElementById('project').style.width = '20em';
+            }
+
+        });
+    });
+
+<<<<<<< .mine
+
+    // ask
+    $("#b1").click(function () {
+        $(this).removeClass("in");
+        $('#rest2').removeClass("in");
+        $('#rest3').removeClass("in");
+        $('#rest4').removeClass("in");
+        $('#rest5').removeClass("in");
+    });
+    $("#b2").click(function () {
+        $(this).removeClass("in");
+        $('#rest1').removeClass("in");
+        $('#rest3').removeClass("in");
+        $('#rest4').removeClass("in");
+        $('#rest5').removeClass("in");
+    });
+    $("#b3").click(function () {
+        $(this).removeClass("in");
+        $('#rest1').removeClass("in");
+        $('#rest2').removeClass("in");
+        $('#rest4').removeClass("in");
+        $('#rest5').removeClass("in");
+    });
+    $("#b4").click(function () {
+        $(this).removeClass("in");
+        $('#rest1').removeClass("in");
+        $('#rest2').removeClass("in");
+        $('#rest3').removeClass("in");
+        $('#rest5').removeClass("in");
+    });
+    $("#b5").click(function () {
+        $(this).removeClass("in");
+        $('#rest1').removeClass("in");
+        $('#rest2').removeClass("in");
+        $('#rest3').removeClass("in");
+        $('#rest4').removeClass("in");
+    });
+
+
+    $("#sform").submit(function (event) {
+        event.preventDefault();
+=======
+    $.get("action.php?action=setUserTime&value=" + new Date());
+});
+>>>>>>> .r296
+
+<<<<<<< .mine
+        var query = $("#sform [name=input]").val().trim();
+        if (query.length === 0) {
+            
+            return;
+=======
+function getTimeSlots(key, time, party, callback) {
+    $.get("action.php?action=getTimeSlots&key=" + key + "&time=" + time + "&party=" + party, function(data) {
+        if (callback) {
+            callback(data);
+>>>>>>> .r296
+        }
+    });
+}
+function getDate(timeMillis) {
+    var date = new Date(timeMillis);
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var year = date.getFullYear();
+
+    return month + "/" + day + "/" + year;
+}
+
+function getTime(timeMillis) {
+    var date = new Date(timeMillis);
+    var hour = date.getHours() % 12;
+    if (hour === 0) {
+        hour = 12;
+    }
+    var minutes = ("0" + date.getMinutes()).slice(-2);
+    var period = date.getHours() < 12 ? "AM" : "PM";
+    
+    return hour + ":" + minutes + " " + period;
+}

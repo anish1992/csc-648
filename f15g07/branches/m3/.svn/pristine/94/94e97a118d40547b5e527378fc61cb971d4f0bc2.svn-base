@@ -1,0 +1,40 @@
+<!--
+navbar
+-->
+
+<div id="custom-bootstrap-menu" class="navbar navbar-default " role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header"><a class="navbar-brand" style="color:goldenrod;" href="index.php">AlpacaTable<span class="glyphicon glyphicon-ice-lolly-tasted"></span></a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-menubuilder"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span cltoggleass="icon-bar"></span><span class="icon-bar"></span>
+            </button>
+        </div>
+        <!-- location set up -->
+        <div class="collapse navbar-collapse navbar-menubuilder">
+            
+            <ul class="nav navbar-nav">
+                <li id="nav-dropdown" class="dropdown">
+                    <a id='drop-loc' value="0" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-map-marker"></span>
+                        Location
+                        <span class="caret"></span>
+                   
+                    </a>
+                    
+                    <ul class="nav navbar-nav dropdown-menu">
+                        <li><a value="1" >SF Bay Area</a></li>
+                        <li><a value="2" >New York City</a></li>
+                        <li><a value="3" >Chicago</a></li>
+                        <li><a value="4" >Houston</a></li>
+                        <li><a value="5" >Toronto</a></li>
+                    </ul>
+                </li>
+                
+            </ul>
+            <ul class="nav navbar-nav navbar-right">   
+                <li><a href="signup.php">Sign Up</a>
+                </li>
+                <li><a href="#menu-toggle" id="menu-toggle">Sign In</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

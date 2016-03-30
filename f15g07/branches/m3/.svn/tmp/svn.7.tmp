@@ -1,0 +1,25 @@
+$(function() {
+    // nav bar
+    $(".dropdown-menu li a").click(function() {
+        //var text = ;
+        $(".dropdown-toggle").text($(this).text());
+        $(".dropdown-toggle").val($(this).text());
+    });
+
+    $("#sform").submit(function(event) {
+        event.preventDefault();
+
+        var query = $("#sform [name=input]").val().trim();
+        if (query.length === 0) {
+            return;
+        }
+
+        var party = $("#sform [name=party]").val();
+
+        var date = $("#sform [name=date]").val();
+        var time = $("#sform [name=time]").val();
+        var seconds = new Date(date + " " + time).getTime() / 1000;
+
+        window.location.href = "search.php?" + "s=" + party + "&t=" + seconds + "&q=" + query;
+    });
+});

@@ -1,0 +1,56 @@
+$(function () {
+
+    //date picker
+    $("#datepicker").datepicker();
+    $("#datepicker").datepicker("setDate", new Date());
+    
+    // nav bar
+    $(".dropdown-menu li a").click(function () {
+
+        $(".btn:first-child").text($(this).text());
+        $(".btn:first-child").val($(this).text());
+
+    });
+
+    //auto compleat
+    $("#project").keyup(function () {
+        $.post("search.php", {input: $(this).val()}, function (data) {
+            var projects = [];
+
+            if (data.length > 0) {
+                var json = JSON.parse(data);
+
+                var location = json["location"];
+                var name = json["name"];
+                var tags = json["tags"];
+
+                projects = name.concat(tags).concat(location);
+            }
+
+            $("#project").autocomplete({
+                delay: 0, // zero dlay
+                minLength: 0, //zero input lag
+                source: projects,
+                focus: function (event, ui) {
+                    $("#project").val(ui.item.label);
+                    return false;
+                },
+                select: function (event, ui) {
+                    $("#project").val(ui.item.label);
+                    $("#project-id").val(ui.item.value);
+                    $("#project-description").html(ui.item.desc);
+                    $("#project-icon").attr("src", "images/" + ui.item.icon);
+
+                    return false;
+                }
+            })
+                    .autocomplete("instance")._renderItem = function (ul, item) {
+                return $("<li>")
+                        .append("<a>" + item.label + "<br>" + item.desc + "</a>")
+                        .appendTo(ul);
+            };
+
+            $("#project").autocomplete("search");
+        });
+    });
+});

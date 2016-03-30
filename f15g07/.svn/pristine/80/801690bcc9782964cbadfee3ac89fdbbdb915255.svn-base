@@ -1,0 +1,97 @@
+<?php
+require_once 'includes/config.php';
+$title = 'Welcome to AlpacaTable!';
+require_once 'includes/header.php';
+require_once 'includes/law.php';
+require_once 'includes/nav.php';
+require_once 'includes/signin.php';
+?>
+<div class="page-container">
+    <div class="slide" align="center"></div>
+    
+    <!-- CAROUSEL -->
+    <div id="myCarousel" class="carousel container slide" style="padding-top: 5em;">
+        <div class="carousel-inner">
+            <div class="active item one"></div>
+            <div class="item two"></div>
+            <div class="item three"></div>
+        </div>
+    </div>
+    <!-- END CAROUSEL -->
+
+    <!-- SEARCH BAR -->
+
+    <div class="hud col-xs-10" style="position: absolute; top: 30%; opacity: 1;">
+
+        <div class="container ">
+
+            <div class=" hud col-xs-10">
+                <div class="mainselection3 row">
+                    <h2>Reserve a table now, for free, with AlpacaTable!</h2>
+                </div>
+            </div>
+            <div class="mainselection row">
+                <form class="form-inline" id="sform" method="get" action="search.php" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <select name="party" class="controls form-control">
+                            <?php
+                            $max = 8;
+                            for ($i = 1; $i <= $max; $i++) {
+                                ?>
+                                <option value="<?php echo $i; ?>"><?php echo $i; ?> person</option>
+                                <?php
+                            }
+                            ?>
+                            <option value="<?php echo $max + 1; ?>">Larger party</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group"><!--date picker-->
+                        <input type="text" name="date" id="datepicker" style="width: 7.5em;" class="controls form-control">
+                        <script>
+                            //date picker // do not move when restructureing
+                            $("#datepicker").datepicker();
+                            $("#datepicker").datepicker("setDate", new Date());
+                        </script>
+                    </div>
+
+                    <div class="form-group">
+                        <select name="time" class="controls form-control">
+                            <?php
+                            $max = 23;
+                            for ($i = 1; $i <= $max; $i++) {
+                                $hour = round(10 + $i / 2);
+                                $period = $hour < 12 ? 'AM' : 'PM';
+                                $hour %= 12;
+                                if ($hour == 0) {
+                                    $hour = 12;
+                                }
+                                $minutes = $i % 2 == 0 ? '30' : '00';
+                                ?>
+                                <option value="<?php echo "{$hour}:{$minutes} {$period}"; ?>" ><?php echo "{$hour}:{$minutes} {$period}"; ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <input id="project" name="input" class="controls form-control input-lg " type="text" autocomplete="off" placeholder="Restaurant Name or Cuisine Type">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" id="btn" class="btn btn-default form-control">Find Table</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- END SEARCH BAR-->
+</div>
+
+
+
+
+
+
+<?php
+require_once 'includes/footer.php';

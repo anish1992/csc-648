@@ -1,0 +1,36 @@
+<?php
+/**
+ * UserInfo is used to store the session info of an user.
+ *
+ * @author sai
+ */
+class UserInfo {
+    public $firstname;
+    public $lastname;
+    public $email;
+    public $password;
+    public $confirmpassword;
+    public $username;
+    public $phonenumber;
+
+    function __construct($firstname,$lastname,$email,$password,$confirmpassword,$username,$phonenumber) {
+        $this->firstname = $firstname;
+        $this->lastname  = $lastname;
+        $this->email     = $email;
+        $this->password  = $password;
+        $this->confirmpassword = $confirmpassword;
+        $this->username  = $username;
+        $this->phonenumber = $phonenumber;
+    }
+    public function getUserInfo(){
+        return array(
+            'firstname' => $this->firstname,
+            'lastname' => $this->lastname,
+            'email'       => $this->email,
+            'password'        => $this->password,
+            'confirmpassword' => $this->confirmpassword,
+            'username'      => $this->username,
+            'phone'         => $this->phonenumber
+        );
+    }
+}

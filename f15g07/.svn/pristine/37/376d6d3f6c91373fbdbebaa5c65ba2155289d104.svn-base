@@ -1,0 +1,79 @@
+<?php
+$timeMS = $time2 * 1000;
+?>
+<form id="search-form-sm" class="form-inline" enctype="multipart/form-data">
+    <div class="form-group">
+        <select name="party" class="controls form-control" >
+<?php
+$max = 8;
+for ($i = 1; $i <= $max; $i++) {
+?>
+                <option value="<?php echo $i; ?>" <?php echo $i == $party ? "selected=\"selected\"" : "" ?>><?php echo $i; ?> person</option>
+<?php
+}
+?>
+            <option value="<?php echo $max + 1; ?>">Larger party</option>
+        </select>
+    </div>
+
+    <div class="form-group"><!--date picker-->
+        <input type="text" name="date" id="datepicker2" style="width: 7.5em;" class="controls form-control">
+        <script>
+            //date picker // do not move when restructureing
+            $("#datepicker2").datepicker();
+            $("#datepicker2").datepicker("setDate", new Date(<?php echo $timeMS; ?>));
+        </script>
+    </div>
+
+    <div class="form-group">
+        <select name="time" class="controls form-control">
+<?php
+$max = 23;
+for ($i = 1; $i <= $max; $i++) {
+    $hour = round(10 + $i / 2);
+    $period = $hour < 12 ? 'AM' : 'PM';
+    $hour %= 12;
+    if ($hour == 0) {
+        $hour = 12;
+    }
+    $minutes = $i % 2 == 0 ? '30' : '00';
+    
+    $time = "{$hour}:{$minutes} {$period}";
+?>
+                <option value="<?php echo $time; ?>"><?php echo $time; ?></option>
+<?php
+}
+?>
+        </select>
+    </div>
+    <button type="submit" style=" margin-top: 0;" class="btn btn-default form-control">Find Table</button>
+</form>
+
+<script>
+    var time = <?php echo $timeMS; ?>;
+
+    $("select[name=time] > option").each(function() {
+        if ($(this).val() === getTime(time)) {
+            $(this).attr("selected", "selected");
+        }
+    });
+
+    $("#search-form-sm").submit(function(e) {
+        e.preventDefault();
+
+        var party = $(this).find("[name=party]").val();
+
+        var date = $(this).find("[name=date]").val();
+        var time = $(this).find("[name=time]").val();
+        var seconds = new Date(date + " " + time).getTime() / 1000;
+
+        getTimeSlots("<?php echo $restaurant->key; ?>", seconds, party, function(data) {
+            var div = $("#reserve-search-div");
+            div.find(".reserve-div-date").html(getDate(seconds * 1000));
+            div.find(".reserve-div-time").html(getTime(seconds * 1000));
+            div.find(".reserve-div-party").html(party);
+
+            $("#reserve-slots").html(data);
+        });
+    });
+</script>

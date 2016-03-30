@@ -1,0 +1,191 @@
+<?php
+
+/**
+ * Description of RestaurantDB
+ *
+ * @author Gary Ng
+ */
+class RestaurantDB extends DatabaseHelper {
+
+    const TABLE = '`restaurant`';
+    const ID = '`id`';
+    const KEY = '`key`';
+    const NAME = '`name`';
+    const DESC = '`description`';
+    const TAGS = '`tags`';
+    const PRICE_MIN = "`price_min`";
+    const PRICE_MAX = "`price_max`";
+    const NUM_TABLES = "`num_tables`";
+
+    public static function searchByName($name, $location, $limit) {
+        $restaurants = array();
+
+        $con = parent::createConnection();
+        $statement = mysqli_prepare($con,
+            ' SELECT r.' . RestaurantDB::ID .
+            ' FROM ' . RestaurantDB::TABLE . ' r' .
+            ' INNER JOIN ' . RestaurantContactDB::TABLE . ' rc' .
+            ' ON r.' . RestaurantDB::ID . ' = rc.' . RestaurantContactDB::ID .
+            ' WHERE r.' . RestaurantDB::NAME . ' LIKE ?' .
+            ' ORDER BY FIELD(rc.' . RestaurantContactDB::CITY . ', ?) DESC, r.' . RestaurantDB::NAME .
+            ' LIMIT ?'
+        );
+
+        $like = "%{$name}%";
+
+        $statement->bind_param('ssi', $like, $location, $limit);
+        $statement->execute();
+
+        $statement->bind_result($id);
+
+        while ($statement->fetch()) {
+            $restaurant = RestaurantDB::getRestaurantById($id);
+            array_push($restaurants, $restaurant);
+        }
+
+        $statement->close();
+
+        return $restaurants;
+    }
+
+    public static function searchByTags($tags, $location, $limit) {
+        $restaurants = array();
+
+        $tempTags = array();
+        foreach ($tags as $tag) {
+            array_push($tempTags, "\"%{$tag}%\"");
+        }
+
+        $str = implode(' OR r.' . RestaurantDB::TAGS . ' LIKE ', $tempTags);
+
+        $con = parent::createConnection();
+        $statement = mysqli_prepare($con,
+            ' SELECT r.' . RestaurantDB::ID .
+            ' FROM ' . RestaurantDB::TABLE . ' r' .
+            ' INNER JOIN ' . RestaurantContactDB::TABLE . ' rc' .
+            ' ON r.' . RestaurantDB::ID . ' = rc.' . RestaurantContactDB::ID .
+            ' WHERE r.' . RestaurantDB::TAGS . ' LIKE ' . $str .
+            ' ORDER BY FIELD(rc.' . RestaurantContactDB::CITY . ', ?) DESC, r.' . RestaurantDB::NAME .
+            ' LIMIT ?'
+        );
+
+        $statement->bind_param('si', $location, $limit);
+        $statement->execute();
+
+        $statement->bind_result($id);
+
+        while ($statement->fetch()) {
+            $restaurant = RestaurantDB::getRestaurantById($id);
+            array_push($restaurants, $restaurant);
+        }
+
+        $statement->close();
+
+        return $restaurants;
+    }
+
+    public static function createRestaurant($key, $name, $desc, $tags,
+            $priceMin, $priceMax, $numTables) {
+        $restaurant = null;
+        
+        $fields = array(
+            RestaurantDB::KEY,
+            RestaurantDB::NAME,
+            RestaurantDB::DESC,
+            RestaurantDB::TAGS,
+            RestaurantDB::PRICE_MIN,
+            RestaurantDB::PRICE_MAX,
+            RestaurantDB::NUM_TABLES
+        );
+
+        $con = parent::createConnection();
+        $statement = mysqli_prepare($con,
+            ' INSERT INTO ' . RestaurantDB::TABLE . ' (' .
+            implode(', ', $fields) .
+            ') VALUES (?, ?, ?, ?, ?, ?, ?)'
+        );
+
+        $statement->bind_param('ssssiii', $key, $name, $desc, $tags, $priceMin,
+                $priceMax, $numTables);
+        $statement->execute();
+        
+        if ($statement->affected_rows > 0) {
+            $id = $statement->insert_id;
+            $restaurant = RestaurantDB::getRestaurantById($id);
+        }
+
+        $statement->close();
+        
+        return $restaurant;
+    }
+
+    public static function getRestaurantByParam($type, $value) {
+        $restaurant = null;
+
+        $fields = array(
+            RestaurantDB::ID,
+            RestaurantDB::KEY,
+            RestaurantDB::NAME,
+            RestaurantDB::DESC,
+            RestaurantDB::TAGS,
+            RestaurantDB::PRICE_MIN,
+            RestaurantDB::PRICE_MAX,
+            RestaurantDB::NUM_TABLES
+        );
+
+        $con = parent::createConnection();
+
+        if ($type === RestaurantDB::ID) {
+            $statement = mysqli_prepare($con,
+                ' SELECT ' . implode(', ', $fields) .
+                ' FROM ' . RestaurantDB::TABLE .
+                ' WHERE ' . RestaurantDB::ID . ' = ?'
+            );
+
+            $statement->bind_param('i', $value);
+        } else if ($type === RestaurantDB::KEY) {
+            $statement = mysqli_prepare($con,
+                ' SELECT ' . implode(', ', $fields) .
+                ' FROM ' . RestaurantDB::TABLE .
+                ' WHERE ' . RestaurantDB::KEY . ' = ?'
+            );
+
+            $statement->bind_param('s', $value);
+        }
+
+        if (!isset($statement)) {
+            return null;
+        }
+
+        $statement->execute();
+
+        $statement->bind_result($id, $key, $name, $desc, $tags, $priceMin,
+                $priceMax, $numTables);
+
+        if ($statement->fetch()) {
+            $restaurant = new Restaurant($id);
+            $restaurant->key = $key;
+            $restaurant->name = $name;
+            $restaurant->desc = $desc;
+            $restaurant->tags = $tags;
+            $restaurant->priceMin = $priceMin;
+            $restaurant->priceMax = $priceMax;
+            $restaurant->numTables = $numTables;
+
+            $location = RestaurantContactDB::getRestaurantLocation($id);
+            $restaurant->location = $location;
+        }
+
+        $statement->close();
+        
+        return $restaurant;
+    }
+
+    public static function getRestaurantById($id) {
+        return RestaurantDB::getRestaurantByParam(RestaurantDB::ID, $id);
+    }
+
+    public static function getRestaurantByKey($key) {
+        return RestaurantDB::getRestaurantByParam(RestaurantDB::KEY, $key);
+    }
+}

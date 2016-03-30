@@ -1,0 +1,71 @@
+<form class="form-inline" id="sform" method="get" action="search.php" enctype="multipart/form-data">
+    <div class="form-group">
+        <select name="party" class="controls form-control" >
+<?php
+$max = 8;
+for ($i = 1; $i <= $max; $i++) {
+?>
+                <option value="<?php echo $i; ?>"><?php echo $i; ?> person </option>
+<?php
+}
+?>
+            <option value="<?php echo $max + 1; ?>">Larger party</option>
+            </span></select>
+    </div>
+
+    <div class="form-group"><!--date picker-->
+        <input type="text" name="date" id="datepicker" style="width: 7.5em;" class="controls form-control">
+        <script>
+            //date picker // do not move when restructureing
+            $("#datepicker").datepicker();
+            $("#datepicker").datepicker("setDate", new Date());
+        </script>
+    </div>
+
+    <div class="form-group">
+        <select name="time" class="controls form-control">
+<?php
+$max = 23;
+for ($i = 1; $i <= $max; $i++) {
+    $hour = round(10 + $i / 2);
+    $period = $hour < 12 ? 'AM' : 'PM';
+    $hour %= 12;
+    if ($hour == 0) {
+        $hour = 12;
+    }
+    $minutes = $i % 2 == 0 ? '30' : '00';
+?>
+                <option value="<?php echo "{$hour}:{$minutes} {$period}"; ?>" ><?php echo "{$hour}:{$minutes} {$period}"; ?></option>
+<?php
+}
+?>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <input id="project" name="input" class="controls form-control input-lg " type="text" autocomplete="off" placeholder="Restaurant Name or Cuisine Type">
+    </div>
+    <div class="form-group">
+        <button type="submit" id="btn" class="btn btn-default form-control">Find Table</button>
+    </div>
+</form>
+
+<script>
+    $("#sform").submit(function (event) {
+        event.preventDefault();
+
+        var query = $("#sform [name=input]").val().trim();
+        if (query.length === 0) {
+            //$("#sform [name=input]").parents('li').addClass('has-warning');
+            return;
+        }
+
+        var party = $("#sform [name=party]").val();
+
+        var date = $("#sform [name=date]").val();
+        var time = $("#sform [name=time]").val();
+        var seconds = new Date(date + " " + time).getTime() / 1000;
+
+        window.location.href = "search.php?" + "s=" + party + "&t=" + seconds + "&q=" + query;
+    });
+</script>

@@ -1,0 +1,153 @@
+<?php
+$title = 'Search Results';
+require_once 'includes/config.php';
+require_once 'includes/header.php';
+require_once 'includes/law.php';
+require_once 'includes/nav.php';
+?>
+<body background="images/search-results/background.jpg" class="search-background">
+</body>
+<?php
+$rest_name_counter = 0;
+$rest_alt_counter = 0;
+$rest_loc_counter = 0;
+$rank = 1;
+$num_results = 0;
+$date = date("m/d/Y", $time);
+$num_results = count($results['name']) + count($results['tags']) + count($results['city']);
+
+$htime = date("h", $time);
+$htime = $htime - 6;
+$mtime = date("i", $time);
+$ttime = ($htime <= 0) ? ($htime + 12) : ($htime);
+$ttime = ($mtime == 30) ? ($ttime * 2) : (($ttime * 2) - 1);
+
+//echo "time: ".$time."<br>";
+//echo "htime: ".$htime."<br>";
+//echo "mtime: ".$mtime."<br>";
+//echo "ttime: ".$ttime."<br>";
+//echo "pricemax: ".$results['name']->priceMax;
+$keys = array();
+?>
+<br>
+<center>
+    <strong><?php echo $num_results; ?></strong><?php echo " results found for "; ?><strong><?php echo $query; ?></strong>
+</center>
+<br>
+
+<?php
+foreach ($results['name'] as $restaurant) {
+    if ($rest_name_counter == 0) {
+        $rest_name_counter++;
+    }
+    display($rank, $restaurant, $party, $time);
+    array_push($keys, $restaurant->key);
+    $rank++;
+    echo "<br>";
+}
+
+foreach ($results['tags'] as $restaurant) {
+    if (in_array($restaurant->key, $keys)) {
+        continue;
+    }
+    if ($rest_alt_counter == 0) {
+        $rest_alt_counter++;
+    }
+    display($rank, $restaurant, $party, $time);
+    array_push($keys, $restaurant->key);
+    $rank++;
+    echo "<br>";
+}
+foreach ($results['city'] as $restaurant) {
+    if (in_array($restaurant->key, $keys)) {
+        continue;
+    }
+    if ($rest_loc_counter == 0) {
+        $rest_loc_counter++;
+    }
+    display($rank, $restaurant, $party, $time);
+    $rank++;
+}
+
+if (count($keys) == 0) {
+    ?><center>
+        No Results.  Please try again.
+    </center>
+    <?php
+}
+
+
+require_once 'includes/footer.php';
+
+function display($rank, $restaurant, $party, $time) {
+    ?>
+    <center>
+        <div class='restaurant-box row' id="<?php echo $restaurant->key ?>">
+
+            <div class="col-md-4"><a href="restaurant.php?v=<?php echo $restaurant->key; ?>&s=<?php echo $party; ?>&t=<?php echo $time; ?>&l=<?php echo $lin; ?>"><img class="img-rounded restaurant-picture" src=<?php echo ImageHelper::getMainImage($restaurant->key); ?>></a></div>
+
+            <div class="col-md-8">
+                <div class="restaurant-name">
+                    <div><strong><?php echo $rank . ".  "; ?><a href="restaurant.php?v=<?php echo $restaurant->key; ?>&s=<?php echo $party; ?>&t=<?php echo $time; ?>&l=<?php echo $lin; ?>"><?php echo $restaurant->name ?></a></strong></div>
+                    <div><small><?php echo $restaurant->shortDesc; ?></small><br></div>
+                </div>
+
+                <div class="row display-info">
+                    <div class ="col-xs-7 text-left">
+
+                        <div><?php
+                            for ($k = 0; $k < $restaurant->priceMax; $k++) {
+                                echo "\$";
+                            }
+                            ?></div>
+                        <div><?php
+                            $counter = 0;
+                            $days = array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
+                            $days_abr = array("Sun", "Mon", "Tues", "Weds", "Thurs", "Fri", "Sat");
+                            foreach ($restaurant->hours as $day) {
+                                if (date("l") == $days[$counter]) {
+                                    $start = $day[0];
+                                    $end = $day[1];
+                                    $start_str = substr($start, 0, -3);
+                                    $end_str = substr($end, 0, -3);
+                                    echo $days_abr[$counter] . ": " . $start_str . " - " . $end_str . "<br>";
+                                }
+
+                                $counter++;
+                            }
+                            ?></div>
+
+                    </div>
+                    <div class="col-xs-5 text-right">
+
+                        <div><?php echo $restaurant->location->city ?></div> 
+                        <div><?php echo $restaurant->location->phone ?></div>
+
+                    </div>
+                </div>
+                <div class='search-buttons' >
+                    <div id="reserve-slots-<?php echo $restaurant->key; ?>">
+                        <script>
+                            getTimeSlots(<?php echo '"' . $restaurant->key . '", ' . $time . ', ' . $party; ?>, function(data) {
+                                $("#reserve-slots-<?php echo $restaurant->key; ?>").html(data);
+                            });
+                        </script>
+                    </div>
+                </div>
+                <div class='search-tags text-center'>
+                    <p style='font-size:12px'>Search Tags:
+                        <span style='font-size:12px'><small><?php echo $restaurant->tags ?></small></span>
+                    </p>                  
+                </div>
+            </div>
+
+
+
+
+
+
+
+        </div>
+    </center>
+    <?php
+}

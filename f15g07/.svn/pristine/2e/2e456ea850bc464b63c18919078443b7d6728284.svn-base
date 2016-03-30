@@ -1,0 +1,15 @@
+</div>
+    <div id="footer">
+        <ul class="nav navbar-nav">
+            <li class="admin"><a href="admin.php"><h5 style="color:goldenrod;">Web Admin Page</h5></a></li>
+            <li class="host" ><a href="Host_Auth.php"><h5 style="color:goldenrod;">Host Page</h5></a></li>
+            <li class="about"><a href="about.php"><h5 style="color:goldenrod;">About</h5></a></li>
+        </ul>
+        <center></center>
+        <ul class="nav navbar-nav navbar-right">
+            <li><h4 style="color: goldenrod; margin-right: 2em;margin-top:1em; "><span class="glyphicon glyphicon-copyright-mark"></span> 2015 AlpacaTable</h4></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
