@@ -6,8 +6,11 @@ Coordination through weekly scrum and monthly milestone meetings as well milesto
 
 ### Info
 For more about San Francisco State University Computer Science Department [click me](http://cs.sfsu.edu/)
+***
 For more about Computer Science Department Csc 648 [click me](http://cs.sfsu.edu/sites/default/files/syllabi/640Desc.pdf)
+***
 For more about San Francisco State University [click me](http://www.sfsu.edu/)
+***
 
 ## Disclaimer
 This project was only for demonstration purposes for the class csc 648. Please do not duplicate! I or none of my Group members are responsible for any adverse effects of any kind if used or copyed. 
